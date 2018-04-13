@@ -1,7 +1,12 @@
 <template>
   <div id="app"> 
+    <!-- 左边播放列表 -->
     <list :playList='playList'/>
+
+    <!-- 唱片 -->
     <player :songInfo='playList[playSongId]' :isCD='isCD'/>
+
+    <!-- 唱片样式切换 -->
     <button :class="['recordStyle',{'cdIcon':isCD},{'vinylIcon':!isCD}]" @click='isCD=!isCD'>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
         <circle class='outer' fill="none" stroke="#fff" stroke-width="2" stroke-miterlimit="10" cx="16" cy="16" r="14"/>
@@ -10,35 +15,44 @@
         <circle class='vinylInner' opacity='0' fill="#000" cx="16" cy="16" r="1.3"/>
       </svg>
     </button>
+    <controller/> 
   </div>
 </template>
 
 <script>
+
 import list from './components/list'
 import player from './components/player'
+import controller from './components/controller'
 export default {
   name: 'App',
   components: {
-    list,player
+    list,player,controller
   },
   data() {
     return {
       api:'https://bird.ioliu.cn/netease/playlist?id=',
       staticApi:'../static/demoData.json',
       playList: [],
-      playSongId:0,
+      playSongId:2,
       listId:location.search.split('=')[1]?location.search.split('=')[1]:53208352,
-      isCD:true//true:false
+      isCD:true,//true:false
+      randomPlay:true,
+      randomPlayList:[]
     }
   },
-  mothods:{
-    playSong(index){
-      console.log()
+  methods:{
+    shuffle(arr){
+      let m = arr.length, i;
+        while (m) {
+        i = (Math.random() * m--) >>> 0;
+        [arr[m], arr[i]] = [arr[i], arr[m]]
+        }
+        return arr;
     }
   },
   mounted () {
-
-    this.$http.get(this.api+this.listId,{ timeout: 3000 }).then((resp)=>{
+    this.$http.get(this.api+this.listId,{ timeout: 1000 }).then((resp)=>{
       //console.log(resp.data.playlist.tracks)
       this.playList= resp.data.playlist.tracks.map((v,i)=>{
         const  {id,name,al,dt}=v //al专辑信息，dt歌曲时长
@@ -47,7 +61,10 @@ export default {
     }).catch((error)=>{
       //bird.ioliu.cn的接口挂了.....调用静态接口
       this.$http.get(this.staticApi).then((resp)=>{
-        this.playList= resp.data
+        this.playList= resp.data;
+        if(this.randomPlay){
+          this.randomPlayList=this.shuffle([...resp.data]);
+        }
       })
     })
   }
@@ -76,5 +93,6 @@ img,embed,object,video{ max-width: 100%; }
 .vinylIcon .inner{ fill:#fff;stroke:#fff; }
 .vinylIcon .light{ }
 .vinylIcon .vinylInner{ opacity:1; }
+
 </style>
 
