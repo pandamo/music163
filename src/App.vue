@@ -1,7 +1,15 @@
 <template>
   <div id="app"> 
     <list :playList='playList'/>
-    <player :songInfo='playList[playSongId]'/>
+    <player :songInfo='playList[playSongId]' :isCD='isCD'/>
+    <button :class="['recordStyle',{'cdIcon':isCD},{'vinylIcon':!isCD}]" @click='isCD=!isCD'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+        <circle class='outer' fill="none" stroke="#fff" stroke-width="2" stroke-miterlimit="10" cx="16" cy="16" r="14"/>
+        <circle class='inner' fill="none" stroke="#fff" stroke-width="2" stroke-miterlimit="10" cx="16" cy="16" r="4"/>
+        <path class='light' d="M13 5a11.4 11.4 0 0 1 11.2 2.9m-1.8 1.8a9 9 0 0 0-8.8-2.4m.7 2.4a6.5 6.5 0 0 1 6.3 1.7M19 27a11.4 11.4 0 0 1-11.2-2.9m1.8-1.8a9 9 0 0 0 8.8 2.4m-.7-2.4a6.5 6.5 0 0 1-6.3-1.7" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10"/>
+        <circle class='vinylInner' opacity='0' fill="#000" cx="16" cy="16" r="1.3"/>
+      </svg>
+    </button>
   </div>
 </template>
 
@@ -16,9 +24,11 @@ export default {
   data() {
     return {
       api:'https://bird.ioliu.cn/netease/playlist?id=',
+      staticApi:'../static/demoData.json',
       playList: [],
       playSongId:0,
-      listId:location.search.split('=')[1]?location.search.split('=')[1]:53208352
+      listId:location.search.split('=')[1]?location.search.split('=')[1]:53208352,
+      isCD:true//true:false
     }
   },
   mothods:{
@@ -28,11 +38,16 @@ export default {
   },
   mounted () {
 
-    this.$http.get(this.api+this.listId).then((resp)=>{
+    this.$http.get(this.api+this.listId,{ timeout: 3000 }).then((resp)=>{
       //console.log(resp.data.playlist.tracks)
       this.playList= resp.data.playlist.tracks.map((v,i)=>{
         const  {id,name,al,dt}=v //al专辑信息，dt歌曲时长
         return {id:id,name:name,cover:al.picUrl,length:dt}
+      })
+    }).catch((error)=>{
+      //bird.ioliu.cn的接口挂了.....调用静态接口
+      this.$http.get(this.staticApi).then((resp)=>{
+        this.playList= resp.data
       })
     })
   }
@@ -40,7 +55,7 @@ export default {
 </script>
 <style>
   * { -webkit-tap-highlight-color: rgba(0, 0, 0, 0); -webkit-box-sizing: border-box; box-sizing: border-box; }
-html,body { width: 100%; height: 100%;}
+html,body { width: 100%; height: 100%;overflow: hidden;}
 body {-webkit-overflow-scrolling: touch; -webkit-font-smoothing: antialiased;
   font: 12px/1.5 Microsoft YaHei,tahoma,arial,Hiragino Sans GB,\\5b8b\4f53,sans-serif;background-color: #000;
   color: #666;}
@@ -53,5 +68,13 @@ a, button, input, textarea { -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
 p{text-align:justify;text-justify:inter-ideograph;}
 :focus {outline: 0;}
 img,embed,object,video{ max-width: 100%; }
+.recordStyle{position: absolute;right: 20px;top: 20px;width: 64px;height: 64px;background-color: #fff;z-index: 999;background-color: transparent;border-radius: 48px; background-size: 100% auto;border: none; cursor: pointer;}
+.recordStyle svg{}
+.cdIcon svg{width: 50%;height: 50%; transition: all ease-in-out .3s;-webkit-filter: drop-shadow( -2px -1px 4px rgba(0,0,0,.3) ); filter: drop-shadow( -2px -1px 4px rgba(0,0,0,.3) );}
+.vinylIcon svg{width: 100%;height: 100%; transition: all ease-in-out .3s;-webkit-filter: drop-shadow( -2px -1px 4px rgba(255,255,255,.3) ); filter: drop-shadow( -2px -1px 4px rgba(255,255,255,.3) );}
+.vinylIcon .outer{ fill:#000; stroke:#000;}
+.vinylIcon .inner{ fill:#fff;stroke:#fff; }
+.vinylIcon .light{ }
+.vinylIcon .vinylInner{ opacity:1; }
 </style>
 
