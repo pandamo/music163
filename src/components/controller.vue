@@ -11,7 +11,8 @@ export default {
   name: 'controller',
   data(){
     return{
-      player:this.$parent.$refs.audioPlayer
+      player:this.$parent.$refs.audioPlayer,
+      playing:false
     }
   },
   components: {
@@ -19,11 +20,20 @@ export default {
   },
   methods: {
     action(way){
-      this.$parent.playSongId=5
+      switch(way){
+        case 'play':
+         if(this.player.paused){
+          this.player.play()
+         }else{
+          this.player.pause()
+         }
+        break;
+      }
+      
     }
   },
-  mounted() {
-   
+  mounted() { 
+   console.log(this.player)
   }
 }
 </script>

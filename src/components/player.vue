@@ -17,16 +17,19 @@
         <div class="cdShadow"></div>
       </div>
     </div>
-     <audio :src="songSrc" ref='audioPlayer'  controls="" style='margin-left:200px;position:fixed;z-index:9999'></audio>  
+     <audio :src="songSrc" ref='audioPlayer' id='audioPlayer'  controls="" style='margin-left:200px;position:fixed;z-index:9999'></audio>  
      <!-- 控制按钮 -->
-    
+    <controller/> 
   </div>
 </template>
 <script>
-
+import controller from './controller'
 export default {
   name: 'player',
   props: ['songInfo', 'isCD'],
+  components:{
+    controller
+  },
   data() {
     return {
       playerBack: {

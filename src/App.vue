@@ -15,7 +15,7 @@
         <circle class='vinylInner' opacity='0' fill="#000" cx="16" cy="16" r="1.3"/>
       </svg>
     </button>
-    <controller/> 
+    
   </div>
 </template>
 
@@ -23,11 +23,11 @@
 
 import list from './components/list'
 import player from './components/player'
-import controller from './components/controller'
+
 export default {
   name: 'App',
   components: {
-    list,player,controller
+    list,player
   },
   data() {
     return {
