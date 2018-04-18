@@ -1,22 +1,14 @@
 <template>
   <div v-if='songInfo'>
-    <div class="cdStyle" v-if='recorderStyle'>
+    <div :class="[{'cdStyle':isCD},{'vinylStyle':!isCD}]">
       <div :class="['blurCoverBack',{'loaded':!loaded}]" :style="playerBack"></div>
       <div :class="['cdBox',{'cdSlideIn':loaded}]">
-        <img :src='songInfo.cover' class="cd" />
+        <div class="vinylBack" v-if='!isCD'></div>
+        <img :src='songInfo.cover' :class="['cd',{'pause':!playing}]" />
         <div class="cdLlight"></div>
         <div class="cdShadow"></div>
       </div>
-    </div>
-    <div class="vinylStyle" v-else>
-      <div :class="['blurCoverBack',{'loaded':!loaded}]" :style="playerBack"></div>
-      <div :class="['cdBox',{'cdSlideIn':loaded}]">
-        <div class="vinylBack"></div>
-        <img :src='songInfo.cover' class="cd" />
-        <div class="cdLlight"></div>
-        <div class="cdShadow"></div>
-      </div>
-    </div>
+    </div>   
     <div class="songInfo">
       <div>{{songInfo.name}}</div>
       <div><span v-for='artist in songInfo.artist'>{{artist.name}}</span></div>
@@ -27,7 +19,7 @@
 import controller from './controller'
 export default {
   name: 'recordPlayer',
-  props: ['songInfo', 'recorderStyle'],
+  props: ['songInfo', 'isCD','playing'],
   components:{
     controller
   },
@@ -39,9 +31,6 @@ export default {
       loaded: false,
       songSrc: ''
     }
-  },
-  methods:{
-
   },
   watch: {
     songInfo: function (v, oldVal) {
@@ -196,6 +185,9 @@ export default {
   box-shadow: -2px -1px 20px rgba(0, 0, 0, .3);
   z-index: 3;
 }
+.pause {
+    animation-play-state: paused !important;
+  }
 
 @keyframes roll {
   0% {

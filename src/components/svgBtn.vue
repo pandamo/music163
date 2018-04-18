@@ -1,5 +1,5 @@
 <template>
-  <svg viewBox="0 0 32 32" v-if='icoName' @click='emit()'>
+  <svg viewBox="0 0 48 48" v-if='icoName' @click='emit()'>
     <g v-html="svgCode"></g>    
   </svg>
 </template>
