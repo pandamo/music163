@@ -1,44 +1,49 @@
 <template>
   <div class='controller'>
-    <svgBtn icoName='prev' @goPlay='action'/>
-    <svgBtn icoName='play' @goPlay='action'/>
-    <svgBtn icoName='next' @goPlay='action'/>
+  <audio :src="songSrc" ref='audioPlayer' id='audioPlayer' :autoplay="autoplay" controls="" style='margin:50px 0 0 0;position:fixed;z-index:9999'></audio>  
+    <svgBtn icoName='prev' @goPlay='action("prev")'/>
+    <svgBtn icoName='play' @goPlay='action("play")'/>
+    <svgBtn icoName='next' @goPlay='action("next")'/>
   </div>
 </template>
 <script>
 import svgBtn from './svgBtn'
 export default {
   name: 'controller',
+  props:['songId'],
   data(){
-    return{
-      player:this.$parent.$refs.audioPlayer,
-      playing:false
+    return{      
+      autoplay:false,
+      songSrc:''
     }
   },
   components: {
     svgBtn
   },
   methods: {
-    action(way){
-      switch(way){
-        case 'play':
-         if(this.player.paused){
-          this.player.play()
+    action(way){     
+      this.$emit('play',way)
+      if(way=='play'){
+        if(this.$refs.audioPlayer.paused){
+          this.$refs.audioPlayer.play()
          }else{
-          this.player.pause()
+          this.$refs.audioPlayer.pause()
          }
-        break;
-      }
-      
+      } 
+    }
+  },
+  watch:{
+    songId:function(val,oldVal){
+      this.songSrc = "//music.163.com/song/media/outer/url?id=" + val + ".mp3"
     }
   },
   mounted() { 
-   console.log(this.player)
+   
   }
 }
 </script>
 <style>
-.controller{position: absolute;z-index:999;bottom: 120px;width: 60%;left: 20%;height: 60px;
+.controller{position: absolute;z-index:999;bottom: 60px;width: 60%;left: 20%;height: 60px;
 display: -webkit-flex;
 display: -moz-flex;
 display: -ms-flex;

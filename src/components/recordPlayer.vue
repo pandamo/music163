@@ -1,6 +1,6 @@
 <template>
   <div v-if='songInfo'>
-    <div class="cdStyle" v-if='isCD'>
+    <div class="cdStyle" v-if='recorderStyle'>
       <div :class="['blurCoverBack',{'loaded':!loaded}]" :style="playerBack"></div>
       <div :class="['cdBox',{'cdSlideIn':loaded}]">
         <img :src='songInfo.cover' class="cd" />
@@ -17,16 +17,17 @@
         <div class="cdShadow"></div>
       </div>
     </div>
-     <audio :src="songSrc" ref='audioPlayer' id='audioPlayer'  controls="" style='margin-left:200px;position:fixed;z-index:9999'></audio>  
-     <!-- 控制按钮 -->
-    <controller/> 
+    <div class="songInfo">
+      <div>{{songInfo.name}}</div>
+      <div><span v-for='artist in songInfo.artist'>{{artist.name}}</span></div>
+    </div>     
   </div>
 </template>
 <script>
 import controller from './controller'
 export default {
-  name: 'player',
-  props: ['songInfo', 'isCD'],
+  name: 'recordPlayer',
+  props: ['songInfo', 'recorderStyle'],
   components:{
     controller
   },
@@ -53,9 +54,6 @@ export default {
           this.playerBack.backgroundImage = "url('" + v.cover + "')"
         }, 20)
         this.songSrc = "//music.163.com/song/media/outer/url?id=" + v.id + ".mp3"
-        /*this.$http.get("http://music.163.com/song/media/outer/url?id="+v.id+".mp3").then((resp)=>{
-          this.songSrc=resp.data.data.mp3.url          
-        })*/
       }
     }
   }
@@ -98,6 +96,16 @@ export default {
   justify-content: center;
   align-items: center;
 }
+.songInfo{  position: absolute;
+  bottom: 160px;
+  text-align: center;
+  left: 200px;
+  right: 200px;
+  font-size: 20px;
+  z-index: 999;
+  color: #fff;
+  text-shadow: -1px -1px 3px rgba(0,0,0,.3);}
+.songInfo span{font-size: 80%;display: inline-block;margin:0 20px;color: #ddd}
 .vinylBack, .vinylStyle .cdShadow {
   background-size: 800px auto;
   width: 800px;
@@ -154,8 +162,8 @@ export default {
   transition: opacity .3s;
 }
 .cdSlideIn {
-  -webkit-animation: slideUp ease-in-out .6s forwards;
-  animation: slideUp ease-in-out .6s forwards;
+  -webkit-animation: slideDown ease-in-out .6s forwards;
+  animation: slideDown ease-in-out .6s forwards;
 }
 .cd {
   width: 500px;
@@ -205,7 +213,7 @@ export default {
     -webkit-transform: rotate(360deg);
   }
 }
-@keyframes slideUp {
+@keyframes slideDown {
   0% {
     transform: translateY(-1200px);
   }
@@ -213,7 +221,7 @@ export default {
     transform: translateY(0);
   }
 }
-@-webkit-keyframes slideUp {
+@-webkit-keyframes slideDown {
   0% {
     -webkit-transform: translateY(-1200px);
   }
