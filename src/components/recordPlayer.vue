@@ -4,7 +4,7 @@
       <div :class="['blurCoverBack',{'loaded':!loaded}]" :style="playerBack"></div>
       <div :class="['cdBox',{'cdSlideIn':loaded}]">
         <div class="vinylBack" v-if='!isCD'></div>
-        <img :src='songInfo.cover' :class="['cd',{'pause':!playing}]" />
+        <img :src='songInfo.cover' :class="['cd',{'pause':!playing}]"/>
         <div class="cdLlight"></div>
         <div class="cdShadow"></div>
       </div>

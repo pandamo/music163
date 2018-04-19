@@ -37,8 +37,8 @@ export default {
       songListId: location.search.split('=')[1] ? location.search.split('=')[1] : 53208352, //网易云播放列表ID
       isCD: true, //true:激光产品样式，false:黑胶唱片样式
       playWay:{
-        randomPlay: true, //是否随机播放
-        normalPlay: false,//顺序播放    
+        randomPlay: false, //是否随机播放
+        normalPlay: true,//顺序播放    
         repeatOne: false //重复播同一首
       },
       playing:true,
@@ -54,8 +54,16 @@ export default {
       if(this.playWay.randomPlay){
         this.curSongId = this.sondList[this.randomPlayList[val]].id
       }else{
-        let _prevSongID=this.sondList.findIndex((v, i) => this.curSongInfo.id == v.id)
-        this.curSongId = this.normalPlayNext?this.sondList[_prevSongID+1].id:this.sondList[_prevSongID-1].id
+        let _prevSongIndex=this.sondList.findIndex((v, i) => this.curSongInfo.id == v.id)//之前播放歌曲的排序
+        if(_prevSongIndex===0){
+          //之前播放第一首
+          this.curSongId = this.normalPlayNext?this.sondList[_prevSongIndex+1].id:this.sondList[this.sondList.length-1].id;
+        }else if(_prevSongIndex===this.sondList.length-1){
+          //之前播放最后一首
+          this.curSongId = this.normalPlayNext?this.sondList[0].id:this.sondList[_prevSongIndex-1].id
+        }else{          
+          this.curSongId = this.normalPlayNext?this.sondList[_prevSongIndex+1].id:this.sondList[_prevSongIndex-1].id;
+        }        
       }
     }
   },
@@ -81,7 +89,7 @@ export default {
           break;
         case 'prev': //播放上一首
           if (this.curSongIndex === 0) {
-            this.curSongIndex = this.sondList.length - 1
+            this.curSongIndex = this.sondList.length - 1           
           } else {
             this.curSongIndex--
           }
@@ -101,6 +109,7 @@ export default {
           break;
         case 'repeatOne': 
         //切换到随机播放
+        this.creatRandomList()
          this.playWay.repeatOne=false
          this.playWay.randomPlay=true
           break;
@@ -124,7 +133,7 @@ export default {
       //创建随机播放列表
       this.shuffle([...this.sondList]).then((newArr) => {
         this.randomPlayList = newArr
-        this.curSongId = this.sondList[newArr[0]].id
+        //this.curSongId = this.sondList[newArr[0]].id
       });
     },
     getNetData() {
