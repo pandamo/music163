@@ -22,11 +22,11 @@ export default {
       songSrc: '',
       playing: true,
       playerDom: undefined,
-      volume: parseInt(localStorage.getItem('volume')),
+      volume: parseInt(localStorage.getItem('volume'))||50,
       volumeBtnTranX: 0,
       mouseMoving:false,
       rangBtnStyle:{ transform: "translateX(50px)"},
-      preVolume:parseInt(localStorage.getItem('volume'))
+      preVolume:parseInt(localStorage.getItem('volume'))||50
     }
   },
   components: {
@@ -65,18 +65,14 @@ export default {
     mouseDown(e) {
       this.volumeBtnTranX = e.clientX;
       this.preVolume = this.volume;
-          document.onmousemove=this.mouseMove//注意document对象！！！
-          document.onmouseup=this.mouseUp
-      
+      document.onmousemove=this.mouseMove//注意document对象！！！
+      document.onmouseup=this.mouseUp      
     },
     mouseMove(e) {
-      let _vol = e.clientX - this.volumeBtnTranX + this.preVolume
-        
+      let _vol = e.clientX - this.volumeBtnTranX + this.preVolume        
       if (_vol <= 100 && _vol >= 0) {
-        this.volume = _vol
-       
-      } 
-     
+        this.volume = _vol       
+      }      
     },
     mouseUp(e) {
       this.volumeBtnTranX = e.clientX;
@@ -89,7 +85,13 @@ export default {
     songId: function (val, oldVal) {
       this.songSrc = "//music.163.com/song/media/outer/url?id=" + val + ".mp3";
       this.playing = true
-      this.$emit('play', true)
+      this.$emit('play', true);
+      setTimeout(()=>{
+        if(!this.playerDom.duration){
+          console.log('该歌曲已下架。')
+          this.play('next')
+        }        
+      },2000)
     },
     volume: function (val) {
       let _volumValue=val/100,_btnTX=val/5
@@ -98,12 +100,10 @@ export default {
     }
   },
   mounted() {
-    this.playerDom = document.getElementById('audioPlayer')
+    this.playerDom = document.getElementById('audioPlayer')    
     this.playerDom.volume = this.volume / 100;
     this.rangBtnStyle.transform = "translateX(" + this.volume + "px)"
-    this.playerDom.addEventListener('ended', () => {
-      this.play('next')
-    })
+    
   }
 }
 

@@ -36,14 +36,9 @@ export default {
       curSongInfo: {}, //当前播放歌曲信息
       songListId: location.search.split('=')[1] ? location.search.split('=')[1] : 53208352, //网易云播放列表ID
       isCD: true, //true:激光产品样式，false:黑胶唱片样式
-      playWay:{
-        randomPlay: false, //是否随机播放
-        normalPlay: true,//顺序播放    
-        repeatOne: false //重复播同一首
-      },
+      playWay:localStorage.getItem('payWay')?JSON.parse(localStorage.getItem('payWay')):{randomPlay: 1,normalPlay: 0,repeatOne: 0},
       playing:true,
-      normalPlayNext:true
-      
+      normalPlayNext:true      
     }
   },
   watch: {    
@@ -74,6 +69,7 @@ export default {
     },
     goPlay(action) {
       //接收控制按钮的动作
+      
       switch (action) {
         case 'play': //播放or暂停
           this.playing=!this.playing
@@ -98,22 +94,23 @@ export default {
           break;
         case 'randomPlay':
         //切换到顺序播放
-         this.playWay.randomPlay=false
-         this.playWay.normalPlay=true
+         this.playWay.randomPlay=0
+         this.playWay.normalPlay=1
          this.normalPlayNext=true
           break;
         case 'normalPlay': 
         //切换到重复播放一首
-         this.playWay.normalPlay=false
-         this.playWay.repeatOne=true
+         this.playWay.normalPlay=0
+         this.playWay.repeatOne=1
           break;
         case 'repeatOne': 
         //切换到随机播放
         this.creatRandomList()
-         this.playWay.repeatOne=false
-         this.playWay.randomPlay=true
+         this.playWay.repeatOne=0
+         this.playWay.randomPlay=1
           break;
       }
+      this.savePlayWay()
     },
     changeStyle() {
       this.isCD = !this.isCD
@@ -133,7 +130,7 @@ export default {
       //创建随机播放列表
       this.shuffle([...this.sondList]).then((newArr) => {
         this.randomPlayList = newArr
-        //this.curSongId = this.sondList[newArr[0]].id
+        this.curSongId = this.sondList[newArr[0]].id
       });
     },
     getNetData() {
@@ -150,21 +147,29 @@ export default {
       })
     },
     getLocalData() {
+      if(localStorage.getItem('payWay')){
+      this.playWay=JSON.parse(localStorage.getItem('payWay'))
+    }
       //从静态接口获取列表
       this.$http.get(this.staticApi).then((resp) => {
         this.sondList = resp.data;
-        this.curSongIndex = 0;
-        this.normalPlayList = resp.data.map((v, n) => { return n }); //创建顺序播放列表        
+        
+        this.normalPlayList = resp.data.map((v, n) => { return n }); //创建顺序播放列表    
+
         if (this.playWay.randomPlay) {
           this.creatRandomList()
         }else{
            this.curSongId = this.sondList[0].id
         }
       })
+    },
+    savePlayWay(){
+      localStorage.setItem('payWay',JSON.stringify(this.playWay))
     }
   },
-  created() {
-    this.getLocalData();    
+  created() {    
+    //this.getNetData();
+    this.getLocalData();
   }
 }
 

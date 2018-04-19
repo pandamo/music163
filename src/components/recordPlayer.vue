@@ -67,7 +67,7 @@ export default {
   -ms-filter: blur(20px);
   filter: blur(20px);
   opacity: .7;
-  transition: opacity .6s ease-in;
+  transition: opacity 2s ease-in;
 }
 .cdBox {
   transform: translateY(1800px);
@@ -150,8 +150,7 @@ export default {
   opacity: 0;
   transition: opacity .3s;
 }
-.cdSlideIn {
-  -webkit-animation: slideDown ease-in-out .6s forwards;
+.cdSlideIn { 
   animation: slideDown ease-in-out .6s forwards;
 }
 .cd {
@@ -161,8 +160,8 @@ export default {
   position: absolute;
 }
 .cdSlideIn .cd {
-  -webkit-animation: roll linear 6s infinite 1s;
-  animation: roll linear 6s infinite 1s;
+  -webkit-animation: roll linear 6s infinite .8s;
+  animation: roll linear 6s infinite .8s;
 }
 .cdLlight {
   position: absolute;
