@@ -5,15 +5,17 @@
 
 
     <!-- 唱片 -->
-    <recordPlayer :songInfo='curSongInfo' :isCD='isCD' :playing='playing'/>
+    <recordPlayer :songInfo='curSongInfo' :cdStyle='cdStyle' :playing='playing'/>
 
 
     <!-- 唱片样式切换 -->
-    <changeRecordStyleBtn :isCD='isCD' @changeFromBtn='changeStyle' />
+    <changeRecordStyleBtn :cdStyle='cdStyle' @changeFromBtn='changeStyle' />
 
 
     <!-- 控制按钮 -->
-    <controller :songId='curSongId' @play="goPlay" :playWay='playWay' @canNotPlay='toast'/>
+    <controller :songId='curSongId' @play="goPlay" :playWay='playWay' @canNotPlay='popToast'/>
+
+    <svgBtn icoName='keyIcon' class='keyTips' @click.native='popToast("→：播下一首<br> ←：播上一首<br>↑ ：增加音量<br>↓ ：减少音量")'/>
 
     <!-- toast -->
     <toast :msg='toastMessage'/>
@@ -25,6 +27,7 @@ import recordPlayer from './components/recordPlayer'
 import changeRecordStyleBtn from './components/changeRecordStyleBtn'
 import controller from './components/controller'
 import toast from './components/toast'
+import svgBtn from './components/svgBtn'
 export default {
   name: 'App',
   components: {
@@ -32,7 +35,8 @@ export default {
     recordPlayer,
     changeRecordStyleBtn,
     controller,
-    toast
+    toast,
+    svgBtn
   },
   data() {
     return {
@@ -45,7 +49,7 @@ export default {
       curSongId: '', //当前播放歌曲的ID
       curSongInfo: {}, //当前播放歌曲信息
       songListId: location.search.split('=')[1] ? location.search.split('=')[1] : 53208352, //网易云播放列表ID
-      isCD: true, //true:激光产品样式，false:黑胶唱片样式
+      cdStyle: localStorage.getItem('cdStyle')?JSON.parse(localStorage.getItem('cdStyle')):true, //true:激光产品样式，false:黑胶唱片样式
       playWay:localStorage.getItem('payWay')?JSON.parse(localStorage.getItem('payWay')):{randomPlay: 1,normalPlay: 0,repeatOne: 0},
       playing:true,
       normalPlayNext:true,
@@ -124,7 +128,8 @@ export default {
       this.savePlayWay()
     },
     changeStyle() {
-      this.isCD = !this.isCD
+      this.cdStyle = !this.cdStyle
+      localStorage.setItem('cdStyle',this.cdStyle)
     },
     shuffle(arr) {
       let _normalArry = [...this.normalPlayList],
@@ -181,7 +186,7 @@ export default {
       //保存播放方式
       localStorage.setItem('payWay',JSON.stringify(this.playWay))
     },
-    toast(message){
+    popToast(message){
       if(!this.showToast){
         this.showToast=true
         this.toastMessage=message

@@ -114,6 +114,29 @@ export default {
         this.$emit('play', 'next')
       }
     })
+     document.addEventListener('keyup',(e)=>{
+      //方向键控制播放和音量
+     switch (e.keyCode) {
+          case 32:
+            this.play('play')
+          break;
+          case 39:
+            this.play('next')
+          break;
+          case 37:
+            this.play('prev')
+          break;
+          case 38:
+            this.volume=this.volume+10>100?100:this.volume+10;
+            localStorage.setItem('volume', this.volume)       
+          break;
+          case 40:
+            this.volume=this.volume-10<0?0:this.volume-10
+            localStorage.setItem('volume', this.volume)
+          break;
+        }
+     })
+
   }
 }
 

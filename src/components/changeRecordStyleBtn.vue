@@ -1,5 +1,5 @@
 <template>
-	<button :class="['recordStyle',{'cdIcon':!isCD},{'vinylIcon':isCD}]" @click='changeStyle'>
+	<button :class="['recordStyle',{'cdIcon':!cdStyle},{'vinylIcon':cdStyle}]" @click='changeStyle'>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
         <circle class='outer' fill="none" stroke="#fff" stroke-width="2" stroke-miterlimit="10" cx="16" cy="16" r="14" />
         <circle class='inner' fill="none" stroke="#fff" stroke-width="2" stroke-miterlimit="10" cx="16" cy="16" r="4" />
@@ -12,7 +12,7 @@
 <script>
 export default {
   name: 'changeRecordStyleBtn',
-  props:['isCD'],
+  props:['cdStyle'],
   methods:{
   	changeStyle(){
   		this.$emit('changeFromBtn')
@@ -35,8 +35,10 @@ export default {
   background-size: 100% auto;
   border: none;
   cursor: pointer;
+  opacity: .3;
+  transition: opacity .6s
 }
-.recordStyle svg {}
+.recordStyle:hover{opacity: 1;}
 .cdIcon svg {
   width: 50%;
   height: 50%;
