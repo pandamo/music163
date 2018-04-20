@@ -1,6 +1,6 @@
 <template>
   <div class='controller'>
-    <audio :src="songSrc" id='audioPlayer' :autoplay="autoplay" style='display:none'></audio>
+    <audio :src="songSrc" id='audioPlayer' :autoplay="autoplay" controls="" style='display:none'></audio>
     <svgBtn :icoName='playWayIcon' @goPlay='play(playWayIcon)' class='smallIcon' />
     <svgBtn icoName='prev' @goPlay='play("prev")' />
     <svgBtn :icoName='playingOrpause' @goPlay='play("play")' />
@@ -8,7 +8,7 @@
     <div class="volumeBar">
       <div class="range" @click='setVolume'></div>
       <button :style='rangBtnStyle' @mousedown='mouseDown'></button>
-    </div>    
+    </div>
   </div>
 </template>
 <script>
@@ -22,11 +22,11 @@ export default {
       songSrc: '',
       playing: true,
       playerDom: undefined,
-      volume: parseInt(localStorage.getItem('volume'))||50,
+      volume: parseInt(localStorage.getItem('volume')) || 50,
       volumeBtnTranX: 0,
-      mouseMoving:false,
-      rangBtnStyle:{ transform: "translateX(50px)"},
-      preVolume:parseInt(localStorage.getItem('volume'))||50
+      mouseMoving: false,
+      rangBtnStyle: { transform: "translateX(50px)" },
+      preVolume: parseInt(localStorage.getItem('volume')) || 50
     }
   },
   components: {
@@ -44,7 +44,7 @@ export default {
       return this.playing ? 'pause' : 'play'
     }
   },
-  methods: {    
+  methods: {
     play(action) {
       this.$emit('play', action)
       if (action == 'play') {
@@ -59,26 +59,30 @@ export default {
         }
       }
     },
-    setVolume(e){
-      this.volume=e.offsetX
+    setVolume(e) {
+      this.volume = e.offsetX
     },
     mouseDown(e) {
       this.volumeBtnTranX = e.clientX;
       this.preVolume = this.volume;
-      document.onmousemove=this.mouseMove//注意document对象！！！
-      document.onmouseup=this.mouseUp      
+      document.onmousemove = this.mouseMove //注意document对象！！！
+      document.onmouseup = this.mouseUp
     },
     mouseMove(e) {
-      let _vol = e.clientX - this.volumeBtnTranX + this.preVolume        
+      let _vol = e.clientX - this.volumeBtnTranX + this.preVolume
       if (_vol <= 100 && _vol >= 0) {
-        this.volume = _vol       
-      }      
+        this.volume = _vol
+      }
     },
     mouseUp(e) {
       this.volumeBtnTranX = e.clientX;
-      document.onmousemove=null
-      document.onmousemove=null
-      localStorage.setItem('volume',this.volume)     
+      document.onmousemove = null
+      document.onmousemove = null
+      localStorage.setItem('volume', this.volume)
+    },
+    audioError() {
+      this.$emit('canNotPlay', '歌曲加载失败，自动播放下一首')
+      this.$emit('play', 'next')
     }
   },
   watch: {
@@ -86,24 +90,30 @@ export default {
       this.songSrc = "//music.163.com/song/media/outer/url?id=" + val + ".mp3";
       this.playing = true
       this.$emit('play', true);
-      setTimeout(()=>{
-        if(!this.playerDom.duration){
-          console.log('该歌曲已下架。')
-          this.play('next')
-        }        
-      },2000)
+      setTimeout(() => {
+        if (!!this.playerDom.error) {
+          this.audioError()
+        }
+      }, 500)
     },
     volume: function (val) {
-      let _volumValue=val/100,_btnTX=val/5
+      let _volumValue = val / 100,
+        _btnTX = val / 5
       this.rangBtnStyle.transform = "translateX(" + val + "px)"
       this.playerDom.volume = _volumValue
     }
   },
   mounted() {
-    this.playerDom = document.getElementById('audioPlayer')    
+    this.playerDom = document.getElementById('audioPlayer')
     this.playerDom.volume = this.volume / 100;
     this.rangBtnStyle.transform = "translateX(" + this.volume + "px)"
-    
+    this.playerDom.addEventListener('ended',()=>{
+      if(this.playWay.repeatOne){
+          this.playerDom.play()
+      }else{
+        this.$emit('play', 'next')
+      }
+    })
   }
 }
 
@@ -149,13 +159,23 @@ export default {
   opacity: 1;
   transition: opacity .3s
 }
-.volumeBar{width: 100px;flex:0;position: relative;height: 0;opacity: .5;transition: opacity .6s}
-.volumeBar:hover{opacity: 1;transition: opacity .6s}
+.volumeBar {
+  width: 100px;
+  flex: 0;
+  position: relative;
+  height: 0;
+  opacity: .5;
+  transition: opacity .6s
+}
+.volumeBar:hover {
+  opacity: 1;
+  transition: opacity .6s
+}
 
 .range {
   opacity: .5;
   height: 5px;
-  width: 100px;  
+  width: 100px;
   border-radius: 4px;
   position: absolute;
   background-color: #fff
@@ -165,10 +185,10 @@ export default {
   width: 14px;
   height: 14px;
   border-radius: 14px;
-  background-color:#fff;
+  background-color: #fff;
   border: none;
   position: absolute;
-  margin:-4px 0 0 -7px;
+  margin: -4px 0 0 -7px;
 }
 
 </style>

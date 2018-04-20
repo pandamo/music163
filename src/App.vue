@@ -2,13 +2,21 @@
   <div id="app">
     <!-- 左边播放列表 -->
     <list :sondList='sondList' :songId='curSongId' @changeSong='playSong' />
+
+
     <!-- 唱片 -->
     <recordPlayer :songInfo='curSongInfo' :isCD='isCD' :playing='playing'/>
+
+
     <!-- 唱片样式切换 -->
     <changeRecordStyleBtn :isCD='isCD' @changeFromBtn='changeStyle' />
+
+
     <!-- 控制按钮 -->
-    <controller :songId='curSongId' @play="goPlay" :playWay='playWay'/>
-    <!-- 按钮控制 -->
+    <controller :songId='curSongId' @play="goPlay" :playWay='playWay' @canNotPlay='toast'/>
+
+    <!-- toast -->
+    <toast :msg='toastMessage'/>
   </div>
 </template>
 <script>
@@ -16,13 +24,15 @@ import list from './components/list'
 import recordPlayer from './components/recordPlayer'
 import changeRecordStyleBtn from './components/changeRecordStyleBtn'
 import controller from './components/controller'
+import toast from './components/toast'
 export default {
   name: 'App',
   components: {
     list,
     recordPlayer,
     changeRecordStyleBtn,
-    controller
+    controller,
+    toast
   },
   data() {
     return {
@@ -38,7 +48,9 @@ export default {
       isCD: true, //true:激光产品样式，false:黑胶唱片样式
       playWay:localStorage.getItem('payWay')?JSON.parse(localStorage.getItem('payWay')):{randomPlay: 1,normalPlay: 0,repeatOne: 0},
       playing:true,
-      normalPlayNext:true      
+      normalPlayNext:true,
+      showToast:false,
+      toastMessage:''
     }
   },
   watch: {    
@@ -62,14 +74,13 @@ export default {
       }
     }
   },
-  methods: {
+  methods: {    
     playSong(songid) {
       //切换歌曲
       this.curSongId = songid;
     },
     goPlay(action) {
-      //接收控制按钮的动作
-      
+      //接收控制按钮的动作      
       switch (action) {
         case 'play': //播放or暂停
           this.playing=!this.playing
@@ -129,8 +140,8 @@ export default {
     creatRandomList() {
       //创建随机播放列表
       this.shuffle([...this.sondList]).then((newArr) => {
-        this.randomPlayList = newArr
-        this.curSongId = this.sondList[newArr[0]].id
+        this.randomPlayList = newArr        
+        //this.curSongId = this.sondList[newArr[0]].id
       });
     },
     getNetData() {
@@ -157,19 +168,35 @@ export default {
         this.normalPlayList = resp.data.map((v, n) => { return n }); //创建顺序播放列表    
 
         if (this.playWay.randomPlay) {
-          this.creatRandomList()
+          this.shuffle([...this.sondList]).then((newArr) => {
+            this.randomPlayList = newArr        
+            this.curSongId = this.sondList[newArr[0]].id
+          });
         }else{
            this.curSongId = this.sondList[0].id
         }
       })
     },
     savePlayWay(){
+      //保存播放方式
       localStorage.setItem('payWay',JSON.stringify(this.playWay))
+    },
+    toast(message){
+      if(!this.showToast){
+        this.showToast=true
+        this.toastMessage=message
+        setTimeout(()=>{
+          this.showToast=false
+          this.toastMessage=''
+        },2000)
+      }
+      
     }
   },
   created() {    
     //this.getNetData();
     this.getLocalData();
+    //this.toast('歌曲加载失败，自动播放下一首')
   }
 }
 
