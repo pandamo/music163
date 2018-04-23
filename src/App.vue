@@ -2,7 +2,11 @@
   <div id="app">
     <!-- 左边播放列表 -->
     <list :sondList='sondList' :songId='curSongId' @changeSong='playSong' />
-
+    
+    <!-- 右边播放器 -->
+    <div class="main">
+      
+   
 
     <!-- 唱片 -->
     <recordPlayer :songInfo='curSongInfo' :cdStyle='cdStyle' :playing='playing'/>
@@ -16,7 +20,7 @@
     <controller :songId='curSongId' @play="goPlay" :playWay='playWay' @canNotPlay='popToast'/>
 
     <svgBtn icoName='keyIcon' class='keyTips' @click.native='popToast("→：播下一首<br> ←：播上一首<br>↑ ：增加音量<br>↓ ：减少音量")'/>
-
+   </div>
     <!-- toast -->
     <toast :msg='toastMessage'/>
   </div>
@@ -51,9 +55,8 @@ export default {
       songListId: location.search.split('=')[1] ? location.search.split('=')[1] : 53208352, //网易云播放列表ID
       cdStyle: localStorage.getItem('cdStyle')?JSON.parse(localStorage.getItem('cdStyle')):true, //true:激光产品样式，false:黑胶唱片样式
       playWay:localStorage.getItem('payWay')?JSON.parse(localStorage.getItem('payWay')):{randomPlay: 1,normalPlay: 0,repeatOne: 0},
-      playing:true,
+      playing:undefined,
       normalPlayNext:true,
-      showToast:false,
       toastMessage:''
     }
   },
@@ -190,11 +193,9 @@ export default {
       localStorage.setItem('payWay',JSON.stringify(this.playWay))
     },
     popToast(message){
-      if(!this.showToast){
-        this.showToast=true
+      if(!this.toastMessage){
         this.toastMessage=message
         setTimeout(()=>{
-          this.showToast=false
           this.toastMessage=''
         },2000)
       }
@@ -204,7 +205,6 @@ export default {
   created() {    
     //this.getNetData();
     this.getLocalData();
-    //this.toast('歌曲加载失败，自动播放下一首')
   }
 }
 
@@ -217,6 +217,7 @@ export default {
 }
 html, body {
   width: 100%;
+  min-width: 1000px;
   height: 100%;
   overflow: hidden;
 }
@@ -261,6 +262,7 @@ img, embed, object, video {
   max-width: 100%;
 }
 
+.main{min-width: 800px}
 
 ::-webkit-scrollbar {
   width: 6px;

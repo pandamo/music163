@@ -11,7 +11,7 @@
     </div>   
     <div class="songInfo">
       <div>{{songInfo.name}}</div>
-      <div><span v-for='artist in songInfo.artist'>{{artist.name}}</span></div>
+      <div><span>{{artists}}</span></div>
     </div>     
   </div>
 </template>
@@ -22,6 +22,13 @@ export default {
   props: ['songInfo', 'cdStyle','playing'],
   components:{
     controller
+  },
+  computed:{
+    artists(){
+      if(this.songInfo.artist){
+        return this.songInfo.artist.map(v=> v.name).join(',')
+      }
+    }
   },
   data() {
     return {
@@ -88,8 +95,8 @@ export default {
 .songInfo{  position: absolute;
   bottom: 160px;
   text-align: center;
-  left: 200px;
-  right: 200px;
+  left:0;
+  right:0;
   font-size: 20px;
   z-index: 999;
   color: #fff;
@@ -110,6 +117,7 @@ export default {
 .vinylStyle .cd, .vinylStyle .cdLlight {
   width: 800px;
   height: 800px;
+  min-width: 800px;
   -webkit-mask: radial-gradient(transparent, transparent 17px, rgba(255, 255, 255, .4) 19px, #000 19px);
   mask: radial-gradient(transparent 17px, rgba(255, 255, 255, .4) 19px, #000 19px);
   z-index: 1;
@@ -155,7 +163,7 @@ export default {
   animation: slideDown ease-in-out .6s forwards;
 }
 .cd {
-  width: 500px;
+  width: 500px;min-width: 500px;
   height: 500px;
   border-radius: 500px;
   position: absolute;
