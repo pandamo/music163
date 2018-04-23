@@ -87,7 +87,10 @@ export default {
       //接收控制按钮的动作      
       switch (action) {
         case 'play': //播放or暂停
-          this.playing=!this.playing
+          this.playing=true
+          break;
+        case 'pause': //播放or暂停
+          this.playing=false
           break;
         case 'next': //播放下一首
           if (this.curSongIndex < this.sondList.length - 1) {
