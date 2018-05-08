@@ -155,6 +155,19 @@ export default {
         //this.curSongId = this.sondList[newArr[0]].id
       });
     },
+    creatPlayList(length){
+      for(let _pLength=0;_pLength<length;_pLength++){
+        this.normalPlayList[_pLength]=_pLength
+      }
+      if (this.playWay.randomPlay) {
+          this.shuffle([...this.sondList]).then((newArr) => {
+            this.randomPlayList = newArr        
+            this.curSongId = this.sondList[newArr[0]].id
+          });
+        }else{
+           this.curSongId = this.sondList[0].id
+        }
+    },
     getNetData() {
       //从bird.ioliu.cn获取列表
       this.$http.get(this.api + this.songListId, { timeout: 3000 }).then((resp) => {
@@ -163,15 +176,7 @@ export default {
           let _ar = ar.map((p) => { return { name: p.name } })
           return { id: id, name: name, cover: al.picUrl, length: dt, artist: _ar, album: al.name }          
         })
-        this.normalPlayList = resp.data.playlist.tracks.map((v, n) => { return n }); //创建顺序播放列表
-          if (this.playWay.randomPlay) {
-            this.shuffle([...this.sondList]).then((newArr) => {
-              this.randomPlayList = newArr        
-              this.curSongId = this.sondList[newArr[0]].id
-            });
-          }else{
-             this.curSongId = this.sondList[0].id
-          }
+         this.creatPlayList(resp.data.playlist.tracks.length)
       }).catch((error) => {
         //bird.ioliu.cn的接口挂了.....调用静态接口
         this.getLocalData()
@@ -184,17 +189,7 @@ export default {
       //从静态接口获取列表
       this.$http.get(this.staticApi).then((resp) => {
         this.sondList = resp.data;
-        
-        this.normalPlayList = resp.data.map((v, n) => { return n }); //创建顺序播放列表    
-
-        if (this.playWay.randomPlay) {
-          this.shuffle([...this.sondList]).then((newArr) => {
-            this.randomPlayList = newArr        
-            this.curSongId = this.sondList[newArr[0]].id
-          });
-        }else{
-           this.curSongId = this.sondList[0].id
-        }
+        this.creatPlayList(resp.data.length)
       })
     },
     savePlayWay(){
