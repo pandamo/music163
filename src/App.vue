@@ -157,12 +157,21 @@ export default {
     },
     getNetData() {
       //从bird.ioliu.cn获取列表
-      this.$http.get(this.api + this.songListId, { timeout: 1000 }).then((resp) => {
+      this.$http.get(this.api + this.songListId, { timeout: 3000 }).then((resp) => {
         this.sondList = resp.data.playlist.tracks.map((v, i) => {
           const { id, name, al, dt, ar } = v //al专辑信息，dt歌曲时长,ar作者
           let _ar = ar.map((p) => { return { name: p.name } })
-          return { id: id, name: name, cover: al.picUrl, length: dt, artist: _ar, album: al.name }
+          return { id: id, name: name, cover: al.picUrl, length: dt, artist: _ar, album: al.name }          
         })
+        this.normalPlayList = resp.data.playlist.tracks.map((v, n) => { return n }); //创建顺序播放列表
+          if (this.playWay.randomPlay) {
+            this.shuffle([...this.sondList]).then((newArr) => {
+              this.randomPlayList = newArr        
+              this.curSongId = this.sondList[newArr[0]].id
+            });
+          }else{
+             this.curSongId = this.sondList[0].id
+          }
       }).catch((error) => {
         //bird.ioliu.cn的接口挂了.....调用静态接口
         this.getLocalData()
@@ -203,8 +212,8 @@ export default {
     }
   },
   created() {    
-    //this.getNetData();
-    this.getLocalData();
+    this.getNetData();
+    //this.getLocalData();
   }
 }
 
