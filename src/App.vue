@@ -23,6 +23,7 @@
    </div>
     <!-- toast -->
     <toast :msg='toastMessage'/>
+    <small class="author">QQ: 1562714<br>weChat: Pandamo<br>pandamo@gmail.com</small>
   </div>
 </template>
 <script>
@@ -276,5 +277,6 @@ img, embed, object, video {
   border-radius: 6px;
   background-color: rgba(0, 0, 0, .2);
 }
-
+.author{position: absolute;right:30px;bottom:30px; color: rgba(255,255,255,.2); text-align: right;z-index: 999;font-size: 10px;text-shadow: 0 1px 3px rgba(0,0,0,.2);transition: color 1s}
+.author:hover{color:  rgba(255,255,255,.5);transition: color .6s}
 </style>
