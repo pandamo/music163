@@ -1,11 +1,11 @@
 <template>
-  <div class='controller'>
+  <div :class="['controller',{'mobileControll':isMobile}]">
     <audio :src="songSrc" id='audioPlayer' :autoplay="autoplay" controls="" style='display:none'></audio>
-    <svgBtn :icoName='playWayIcon' @goPlay='play(playWayIcon)' class='smallIcon' />
+    <svgBtn  :icoName='playWayIcon' @goPlay='play(playWayIcon)' class='smallIcon' />
     <svgBtn icoName='prev' @goPlay='play("prev")' />
     <svgBtn :icoName='playingOrpause' @goPlay='play("play")' />
     <svgBtn icoName='next' @goPlay='play("next")' />
-    <div class="volumeBar">
+    <div  class="volumeBar">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class='speakerIcon' @click='muteOnoff'>
         <path fill='#fff' d="M3.503 7.688H1.518a.5.5 0 0 0-.5.5v7.623a.5.5 0 0 0 .5.5h1.985a.5.5 0 0 0 .5-.5V8.188a.5.5 0 0 0-.5-.5zm9.121-3.067a.497.497 0 0 0-.477-.036L5.602 7.534a.5.5 0 0 0-.294.456v8.02c0 .196.115.375.294.456l6.545 2.949a.498.498 0 0 0 .706-.456V5.041a.499.499 0 0 0-.229-.42z" />
         <path fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M18.856 18.503C20.52 16.84 21.548 14.54 21.548 12s-1.028-4.839-2.692-6.503" v-show='speakerIconVolume[2]' />
@@ -28,7 +28,8 @@ export default {
       playing: false,
       playerDom: undefined,
       volume: parseFloat(localStorage.getItem('volume')) || 0.5,
-      volumeTmp: parseFloat(localStorage.getItem('volume')) || 0.5
+      volumeTmp: parseFloat(localStorage.getItem('volume')) || 0.5,
+      isMobile:/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     }
   },
   components: {
@@ -66,7 +67,9 @@ export default {
     },
     audioError() {
       this.$emit('canNotPlay', '歌曲加载失败，自动播放下一首')
-      this.$emit('play', 'next')
+      setTimeout(()=>{
+        this.$emit('play', 'next')
+      },1000)
     },
     muteOnoff() {
       this.volume = this.volume ? 0 : parseFloat(this.volumeTmp)
@@ -77,11 +80,13 @@ export default {
       this.songSrc = "//music.163.com/song/media/outer/url?id=" + val + ".mp3";
       //this.playing = true
       this.$emit('play', true);
+      
+      
       setTimeout(() => {
         if (!!this.playerDom.error) {
           this.audioError()
         }
-      }, 500)
+      }, 1500)
     },
     volume: function(val) {
       this.playerDom.volume = val
@@ -229,5 +234,10 @@ export default {
   border-radius: 6px;
   background: rgba(255, 255, 255, .5);
 }
-
+.mobileControll{width: 100vw;left: 0;bottom:2vh;height: 20vw;margin: 0}
+.mobileControll .smallIcon,.mobileControll .volumeBar{display: none;}
+.mobileControll svg{flex: 0 0 10vw;
+  height: 10vw;
+  margin: 0 11vw;
+  width: 10vw;}
 </style>

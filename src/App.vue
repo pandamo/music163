@@ -1,34 +1,47 @@
 <template>
   <div id="app">
-    <!-- 左边播放列表 -->
-    <list :sondList='sondList' :songId='curSongId' @changeSong='playSong' />
     
-    <!-- 右边播放器 -->
-    <div class="main">
+      <!-- 左边播放列表 -->
+      <list :sondList='sondList' :songId='curSongId' @changeSong='playSong' :isMobile='isMobile'/>
+
+      <!-- 右边播放器 -->
       
+
+        <!-- 唱片-->
+        <player :songInfo='curSongInfo' :cdStyle='cdStyle' :playing='playing'  @swipeCd='goPlay'/>
+ 
+
+        <!-- 唱片样式切换 -->
+        <changeRecordStyleBtn :cdStyle='cdStyle' @changeFromBtn='changeStyle' v-if='!isMobile'/>
+
+
+        <!-- 控制按钮 -->
+        <controller :songId='curSongId' @play="goPlay" :playWay='playWay' @canNotPlay='popToast'/>
+
+        <svgBtn icoName='keyIcon' class='keyTips' @click.native='popToast("→：播下一首<br> ←：播上一首<br>↑ ：增加音量<br>↓ ：减少音量")'  v-if='!isMobile' />
+    
+      <small class="author" v-if='!isMobile'>
+        QQ: 1562714
+        <br>weChat: Pandamo
+        <br>pandamo@gmail.com</small>
+        <small v-else style='position: fixed;  top: 4vw;  right: 2vw;  text-align: right;'>30CM MusicBox</small>
+   
    
 
-    <!-- 唱片 -->
-    <recordPlayer :songInfo='curSongInfo' :cdStyle='cdStyle' :playing='playing'/>
-
-
-    <!-- 唱片样式切换 -->
-    <changeRecordStyleBtn :cdStyle='cdStyle' @changeFromBtn='changeStyle' />
-
-
-    <!-- 控制按钮 -->
-    <controller :songId='curSongId' @play="goPlay" :playWay='playWay' @canNotPlay='popToast'/>
-
-    <svgBtn icoName='keyIcon' class='keyTips' @click.native='popToast("→：播下一首<br> ←：播上一首<br>↑ ：增加音量<br>↓ ：减少音量")'/>
-   </div>
-    <!-- toast -->
-    <toast :msg='toastMessage'/>
-    <small class="author">QQ: 1562714<br>weChat: Pandamo<br>pandamo@gmail.com</small>
+   <!--  toast -->
+    <toast :msg='toastMessage' />
   </div>
 </template>
 <script>
+const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 import list from './components/list'
-import recordPlayer from './components/recordPlayer'
+//import recordPlayer from './components/recordPlayer'
+//import recordPlayerMobile from './components/recordPlayerMobile'
+//const recordPlayer = () => import('./../src/components/recordPlayer.vue')
+//const recordPlayerMobile = () => import('./../src/components/recordPlayerMobile.vue')
+
+//判断是否手机，加载相应唱片样式
+const player = isMobile?() => import('./../src/components/recordPlayerMobile.vue'):(resolve) => {require(['./../src/components/recordPlayer.vue'],resolve)}
 import changeRecordStyleBtn from './components/changeRecordStyleBtn'
 import controller from './components/controller'
 import toast from './components/toast'
@@ -37,7 +50,7 @@ export default {
   name: 'App',
   components: {
     list,
-    recordPlayer,
+    player,
     changeRecordStyleBtn,
     controller,
     toast,
@@ -55,10 +68,11 @@ export default {
       curSongInfo: {}, //当前播放歌曲信息
       songListId: location.search.split('=')[1] ? location.search.split('=')[1] : 53208352, //网易云播放列表ID
       cdStyle: localStorage.getItem('cdStyle')?JSON.parse(localStorage.getItem('cdStyle')):true, //true:激光产品样式，false:黑胶唱片样式
-      playWay:localStorage.getItem('payWay')?JSON.parse(localStorage.getItem('payWay')):{randomPlay: 1,normalPlay: 0,repeatOne: 0},
+      playWay:isMobile?{randomPlay: 0,normalPlay: 1,repeatOne: 0}:localStorage.getItem('payWay')?JSON.parse(localStorage.getItem('payWay')):{randomPlay: 1,normalPlay: 0,repeatOne: 0},
       playing:undefined,
       normalPlayNext:true,
-      toastMessage:''
+      toastMessage:'',
+      isMobile:isMobile
     }
   },
   watch: {    
@@ -82,12 +96,14 @@ export default {
       }
     }
   },
-  methods: {    
+  methods: {   
+    
     playSong(songid) {
       //切换歌曲
       this.curSongId = songid;
     },
     goPlay(action) {
+     // console.log(action);      
       //接收控制按钮的动作      
       switch (action) {
         case 'play': //播放or暂停
@@ -172,12 +188,17 @@ export default {
     getNetData() {
       //从bird.ioliu.cn获取列表
       this.$http.get(this.api + this.songListId, { timeout: 3000 }).then((resp) => {
-        this.sondList = resp.data.playlist.tracks.map((v, i) => {
+        if(resp.data.playlist.tracks.length>1){
+           this.sondList = resp.data.playlist.tracks.map((v, i) => {
           const { id, name, al, dt, ar } = v //al专辑信息，dt歌曲时长,ar作者
           let _ar = ar.map((p) => { return { name: p.name } })
           return { id: id, name: name, cover: al.picUrl, length: dt, artist: _ar, album: al.name }          
         })
          this.creatPlayList(resp.data.playlist.tracks.length)
+        }else{
+          this.getLocalData()
+        }
+       
       }).catch((error) => {
         //bird.ioliu.cn的接口挂了.....调用静态接口
         this.getLocalData()
@@ -207,76 +228,12 @@ export default {
       
     }
   },
-  created() {    
-    this.getNetData();
-    //this.getLocalData();
+  created() {        
+    this.getNetData();  
+    this.popToast('aaaa')
+    
   }
 }
-
 </script>
-<style>
-* {
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
-html, body {
-  width: 100%;
-  min-width: 1000px;
-  height: 100%;
-  overflow: hidden;
-}
-body {
-  -webkit-overflow-scrolling: touch;
-  -webkit-font-smoothing: antialiased;
-  font: 12px/1.5 Microsoft YaHei, tahoma, arial, Hiragino Sans GB, \\5b8b\4f53, sans-serif;
-  background-color: #000;
-  color: #666;
-}
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td, hr, button, article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, sumary {
-  margin: 0;
-  padding: 0;
-}
-input, select, textarea {
-  border: 0;
-  -webkit-appearance: none;
-  appearance: none;
-  outline: none;
-  border-radius: 0;
-}
-ol, ul {
-  list-style: none;
-}
-img, a {
-  -webkit-touch-callout: none;
-}
-a, a:active, a:hover {
-  text-decoration: none;
-}
-a, button, input, textarea {
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
-p {
-  text-align: justify;
-  text-justify: inter-ideograph;
-}
-:focus {
-  outline: 0;
-}
-img, embed, object, video {
-  max-width: 100%;
-}
+<style src='./assets/css/musicbox163.css'></style>
 
-.main{min-width: 800px}
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-thumb {
-  border-radius: 6px;
-  background-color: rgba(0, 0, 0, .2);
-}
-.author{position: absolute;right:30px;bottom:30px; color: rgba(255,255,255,.2); text-align: right;z-index: 999;font-size: 10px;text-shadow: 0 1px 3px rgba(0,0,0,.2);transition: color 1s}
-.author:hover{color:  rgba(255,255,255,.5);transition: color .6s}
-</style>

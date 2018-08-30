@@ -1,5 +1,5 @@
 <template>
-  <div :class="['toast',{'hide':!msg}]" v-html='msg'></div>
+  <div :class="['toast',{'hide':!msg},{'mobileToast':isMObile}]" v-html='msg'></div>
 </template>
 <script>
 export default {
@@ -7,7 +7,7 @@ export default {
   props: ['msg'],
   data() {
     return {
-
+      isMObile:/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
     }
   }
 }
@@ -26,10 +26,12 @@ export default {
   box-shadow: -2px -1px 2px rgba(0,0,0,.05);
   z-index: 999;
   font-size: 14px;
-  transition: transform .6s;
+  transition: transform .6s;;
 }
 .hide{
-	transform: translateX(350px);transition: transform .6s;
+	transform: translateX(350px);transition: transform .6s;  padding: 0 !important;
 }
+.mobileToast{bottom: 25vh;padding:3vw;left: 0;	transform: translateX(0);transition: transform .6s; }
+.hide.mobileToast{transform: translateX(100vw) !important;}
 
 </style>
