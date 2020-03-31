@@ -84,7 +84,7 @@ export default {
       normalPlayNext: true,
       toastMessage: '',
       isMobile: isMobile,
-      inited:false
+      inited: false
     }
   },
   watch: {
@@ -228,10 +228,9 @@ export default {
             }
           })
           this.creatPlayList(resp.data.playlist.tracks.length)
-          this.inited=true
+          this.inited = true
         } else {
-          this.getLocalData()
-          this.inited=true
+          this.getLocalData()          
         }
       }).catch(() => {
         // bird.ioliu.cn的接口挂了,调用静态接口
@@ -244,9 +243,11 @@ export default {
       }
       // 从静态接口获取列表
       this.$http.get(this.staticApi).then((resp) => {
+        console.log('从静态接口获取列表: ', resp)
         this.sondList = resp.data
         this.creatPlayList(resp.data.length)
       })
+      this.inited = true
     },
     savePlayWay() {
       // 保存播放方式
@@ -262,7 +263,8 @@ export default {
     }
   },
   created() {
-    this.getNetData()
+    this.getLocalData()
+    // this.getNetData()
   }
 }
 </script>

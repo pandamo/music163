@@ -5,7 +5,7 @@
       <div :class="['cdBox',{'cdSlideIn':loaded}]">
         <div class="vinylBack" v-if='!cdStyle'></div>
         <div class="cdLlight"></div>
-        <img :src='songInfo.cover' :class="['cd',{'pause':!playing}]"/>
+        <img :src='cover' :class="['cd',{'pause':!playing}]"/>
         <div class="cdShadow"></div>
       </div>
     </div>
@@ -32,7 +32,8 @@ export default {
         backgroundImage: ''
       },
       loaded: false,
-      songSrc: ''
+      songSrc: '',
+      cover: ''
     }
   },
   methods: {
@@ -45,6 +46,7 @@ export default {
       _img.onload = () => {
         setTimeout(() => {
           this.playerBack.backgroundImage = "url('" + _src + "')"
+          this.cover = _src
           this.loaded = true
         }, 20)
       }

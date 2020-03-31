@@ -4,7 +4,7 @@
       <div :class="['blurCoverBack',{'loaded':!loaded}]" :style="playerBack"></div>
       <div class="cdBox" :style='moveStyle'  @touchstart='touchStart' @touchmove='touchMove' @touchend='toucheEnd'>
         <div class="cdLlight"></div>
-        <img :src='songInfo.cover' :class="[{'cd':loaded},{'pause':!playing || touching}]" id='cd'/>
+        <img :src='cover' :class="[{'cd':loaded},{'pause':!playing || touching}]" id='cd'/>
         <div class="cdShadow"></div>
       </div>
     </div>
@@ -30,7 +30,8 @@ export default {
       endX: 0,
       touching: false,
       touchAction: '',
-      opacity: 1
+      opacity: 1,
+      cover:''
     }
   },
   computed: {
@@ -68,13 +69,15 @@ export default {
     initRecodPlayer(songInfo) {
       this.loaded = false
       let _img = new Image()
-      _img.src = songInfo.cover + '?param=400y400'
-      console.log('_img.src: ', _img.src)
+      let _src = songInfo.cover + '?param=400y400'
+      _img.src = _src
+      // console.log('_img.src: ', _img.src)
       this.songSrc = '//music.163.com/song/media/outer/url?id=' + songInfo.id + '.mp3'
       _img.onload = () => {
         this.loaded = true
         setTimeout(() => {
-          this.playerBack.backgroundImage = "url('" + songInfo.cover + "')"
+          this.playerBack.backgroundImage = "url('" + _src + "')"
+          this.cover = _src
         }, 20)
       }
     },
