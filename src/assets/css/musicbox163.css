@@ -45,13 +45,8 @@ p {
 :focus {
   outline: 0;
 }
-img, embed, object, video {
-  /* max-width: 100%; */
-}
 
-.main{
-/*   min-width: 800px */
-}
+
 
 ::-webkit-scrollbar {
   width: 6px;
@@ -60,6 +55,9 @@ img, embed, object, video {
 ::-webkit-scrollbar-thumb {
   border-radius: 6px;
   background-color: rgba(0, 0, 0, .2);
+}
+.list ul{
+  background-color: rgba(0, 0, 0, .3);
 }
 .author{position: absolute;right:30px;bottom:30px; color: rgba(255,255,255,.2); text-align: right;z-index: 999;font-size: 10px;text-shadow: 0 1px 3px rgba(0,0,0,.2);transition: color 1s}
 .author:hover{color:  rgba(255,255,255,.5);transition: color .6s}
@@ -128,7 +126,8 @@ background:#000;
   min-width: 440px; 
   max-width: 440px; 
   box-sizing: border-box;
-   border: 40px solid rgba(0,0,0,.3); -webkit-mask: radial-gradient(transparent, transparent 16px, #000 19px);
+  border: 40px solid rgba(0,0,0,.3); 
+  -webkit-mask: radial-gradient(transparent, transparent 16px, #000 19px);
    
 }
 .vinylStyle .cdLlight {
