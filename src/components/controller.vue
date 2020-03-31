@@ -29,7 +29,9 @@ export default {
       playerDom: undefined,
       volume: parseFloat(localStorage.getItem('volume')) || 0.5,
       volumeTmp: parseFloat(localStorage.getItem('volume')) || 0.5,
-      isMobile:/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      )
     }
   },
   components: {
@@ -47,8 +49,11 @@ export default {
       return this.playing ? 'pause' : 'play'
     },
     speakerIconVolume() {
-      return [parseFloat(this.volume) > 0, parseFloat(this.volume) > .33, parseFloat(this.volume) > .66]
-
+      return [
+        parseFloat(this.volume) > 0,
+        parseFloat(this.volume) > 0.33,
+        parseFloat(this.volume) > 0.66
+      ]
     }
   },
   methods: {
@@ -57,7 +62,7 @@ export default {
       if (action == 'play') {
         let _pause = !!this.playerDom.paused
         if (this.playerDom.paused) {
-          this.playerDom.play();
+          this.playerDom.play()
         } else {
           this.playerDom.pause()
         }
@@ -67,9 +72,9 @@ export default {
     },
     audioError() {
       this.$emit('canNotPlay', '歌曲加载失败，自动播放下一首')
-      setTimeout(()=>{
+      setTimeout(() => {
         this.$emit('play', 'next')
-      },1000)
+      }, 1000)
     },
     muteOnoff() {
       this.volume = this.volume ? 0 : parseFloat(this.volumeTmp)
@@ -77,13 +82,12 @@ export default {
   },
   watch: {
     songId: function(val, oldVal) {
-      this.songSrc = "//music.163.com/song/media/outer/url?id=" + val + ".mp3";
-      //this.playing = true
-      this.$emit('play', true);
-      
-      
+      this.songSrc = '//music.163.com/song/media/outer/url?id=' + val + '.mp3'
+      // this.playing = true
+      this.$emit('play', true)
+
       setTimeout(() => {
-        if (!!this.playerDom.error) {
+        if (this.playerDom.error) {
           this.audioError()
         }
       }, 1500)
@@ -98,7 +102,7 @@ export default {
   },
   mounted() {
     this.playerDom = document.getElementById('audioPlayer')
-    this.playerDom.volume = this.volume;
+    this.playerDom.volume = this.volume
     this.playerDom.addEventListener('ended', () => {
       if (this.playWay.repeatOne) {
         this.playerDom.play()
@@ -114,29 +118,34 @@ export default {
       this.$emit('play', 'pause')
       this.playing = false
     })
-    document.addEventListener('keyup', (e) => {
-      //方向键控制播放和音量
+    document.addEventListener('keyup', e => {
+      // 方向键控制播放和音量
       switch (e.keyCode) {
         case 32:
           this.play('play')
-          break;
+          break
         case 39:
           this.play('next')
-          break;
+          break
         case 37:
           this.play('prev')
-          break;
+          break
         case 38:
-          this.volume = parseFloat(this.volume) > .9 ? 1 : (parseFloat(this.volume) + .1).toFixed(2);
-          break;
+          this.volume =
+            parseFloat(this.volume) > 0.9
+              ? 1
+              : (parseFloat(this.volume) + 0.1).toFixed(2)
+          break
         case 40:
-          this.volume = parseFloat(this.volume) < .1 ? 0 : (parseFloat(this.volume) - .1).toFixed(2);
-          break;
+          this.volume =
+            parseFloat(this.volume) < 0.1
+              ? 0
+              : (parseFloat(this.volume) - 0.1).toFixed(2)
+          break
       }
     })
   }
 }
-
 </script>
 <style>
 .controller {
@@ -162,23 +171,23 @@ export default {
   height: 48px;
   cursor: pointer;
   margin: 0 60px;
-  opacity: .5;
-  transition: opacity .3s;
-  filter: drop-shadow( -1px -2px 4px rgba(0, 0, 0, .3));
-  -webkit-filter: drop-shadow( -1px -2px 4px rgba(0, 0, 0, .3));
-  transition: opacity .6s
+  opacity: 0.5;
+  transition: opacity 0.3s;
+  filter: drop-shadow(-1px -2px 4px rgba(0, 0, 0, 0.3));
+  -webkit-filter: drop-shadow(-1px -2px 4px rgba(0, 0, 0, 0.3));
+  transition: opacity 0.6s;
 }
 
 .controller svg:hover {
-  opacity: .8;
-  transition: opacity .3s
+  opacity: 0.8;
+  transition: opacity 0.3s;
 }
 
 .controller input {
   flex: 0 0 100px;
   width: 100px;
   position: relative;
-  margin-left: -100px
+  margin-left: -100px;
 }
 
 .smallIcon {
@@ -188,23 +197,23 @@ export default {
 .volumeBar {
   flex: 0;
   position: relative;
-  opacity: .5;
-  transition: opacity .6s
+  opacity: 0.5;
+  transition: opacity 0.6s;
 }
 
 .volumeBar:hover {
   opacity: 1;
-  transition: opacity .6s
+  transition: opacity 0.6s;
 }
 
 .volumeBar .speakerIcon {
-  opacity: .5;
+  opacity: 0.5;
   position: absolute;
   margin-top: -11px;
   margin-left: -25px;
 }
 
-.controller input[type='range'] {
+.controller input[type="range"] {
   cursor: pointer;
   -webkit-appearance: none;
   padding: 0;
@@ -213,7 +222,7 @@ export default {
   font-size: 0;
   position: absolute;
   margin-top: -2px;
-  margin-left: 0 !important
+  margin-left: 0 !important;
 }
 
 ::-webkit-slider-thumb {
@@ -232,12 +241,23 @@ export default {
   width: 100px;
   height: 6px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, .5);
+  background: rgba(255, 255, 255, 0.5);
 }
-.mobileControll{width: 100vw;left: 0;bottom:2vh;height: 20vw;margin: 0}
-.mobileControll .smallIcon,.mobileControll .volumeBar{display: none;}
-.mobileControll svg{flex: 0 0 10vw;
+.mobileControll {
+  width: 100vw;
+  left: 0;
+  bottom: 3vh;
+  height: 20vw;
+  margin: 0;
+}
+.mobileControll .smallIcon,
+.mobileControll .volumeBar {
+  display: none;
+}
+.mobileControll svg {
+  flex: 0 0 10vw;
   height: 10vw;
   margin: 0 11vw;
-  width: 10vw;}
+  width: 10vw;
+}
 </style>

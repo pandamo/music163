@@ -1,6 +1,9 @@
 <template>
 <div id="app">
 
+  <transition name='fade'>
+   <loadingCover v-if='!inited && isMobile'></loadingCover>
+  </transition>
   <!-- 左边播放列表 -->
   <list :sondList='sondList' :songId='curSongId' @changeSong='playSong' :isMobile='isMobile' />
 
@@ -29,6 +32,7 @@
 </template>
 <script>
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+import loadingCover from './components/loadingCover'
 import list from './components/list'
 import changeRecordStyleBtn from './components/changeRecordStyleBtn'
 import controller from './components/controller'
@@ -47,6 +51,7 @@ const player = isMobile ? () => import('./../src/components/recordPlayerMobile.v
 export default {
   name: 'App',
   components: {
+    loadingCover,
     list,
     player,
     changeRecordStyleBtn,
@@ -78,7 +83,8 @@ export default {
       playing: undefined,
       normalPlayNext: true,
       toastMessage: '',
-      isMobile: isMobile
+      isMobile: isMobile,
+      inited:false
     }
   },
   watch: {
@@ -119,6 +125,7 @@ export default {
           this.playing = false
           break
         case 'next': // 播放下一首
+          console.log('播放下一首')
           if (this.curSongIndex < this.sondList.length - 1) {
             this.curSongIndex++
           } else {
@@ -210,18 +217,21 @@ export default {
                 name: p.name
               }
             })
+            let _coverImg = al.picUrl + (this.isMobile ? '?param=400y400' : '?param=800y800')
             return {
               id: id,
               name: name,
-              cover: al.picUrl,
+              cover: _coverImg,
               length: dt,
               artist: _ar,
               album: al.name
             }
           })
           this.creatPlayList(resp.data.playlist.tracks.length)
+          this.inited=true
         } else {
           this.getLocalData()
+          this.inited=true
         }
       }).catch(() => {
         // bird.ioliu.cn的接口挂了,调用静态接口
