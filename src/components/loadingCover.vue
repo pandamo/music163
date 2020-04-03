@@ -4,8 +4,8 @@
       <g fill="none" stroke="#fff" stroke-width="1.5">
         <circle cx="16" cy="16" r="14" />
         <circle cx="16" cy="16" r="4" />
-      </g>        
-        <path d="M13 5a11.4 11.4 0 0 1 11.2 2.9m-1.8 1.8a9 9 0 0 0-8.8-2.4m.7 2.4a6.5 6.5 0 0 1 6.3 1.7M19 27a11.4 11.4 0 0 1-11.2-2.9m1.8-1.8a9 9 0 0 0 8.8 2.4m-.7-2.4a6.5 6.5 0 0 1-6.3-1.7" fill="none" stroke="#fff" stroke-linecap="round" />        
+      </g>
+        <path d="M13 5a11.4 11.4 0 0 1 11.2 2.9m-1.8 1.8a9 9 0 0 0-8.8-2.4m.7 2.4a6.5 6.5 0 0 1 6.3 1.7M19 27a11.4 11.4 0 0 1-11.2-2.9m1.8-1.8a9 9 0 0 0 8.8 2.4m-.7-2.4a6.5 6.5 0 0 1-6.3-1.7" fill="none" stroke="#fff" stroke-linecap="round" />
       </svg>
  </div>
 </template>
@@ -32,20 +32,12 @@
   animation:roll 2s infinite linear;
 }
 
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 1s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
 @keyframes upAndDown {
-  
   50% {
     transform: translateY(5vh);
   }
 }
 @-webkit-keyframes upAndDown {
-  
   50% {
     -webkit-transform:translateY(5vh);
   }

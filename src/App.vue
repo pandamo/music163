@@ -4,8 +4,9 @@
   <transition name='fade'>
    <loadingCover v-if='!inited && isMobile'></loadingCover>
   </transition>
+
   <!-- 左边播放列表 -->
-  <list :sondList='sondList' :songId='curSongId' @changeSong='playSong' :isMobile='isMobile' />
+  <list :sondList='sondList' :songId='curSongId' @changeSong='playSong' :isMobile='isMobile' :toggle='toggle' />
 
   <!-- 右边播放器 -->
 
@@ -16,7 +17,7 @@
   <changeRecordStyleBtn :cdStyle='cdStyle' @changeFromBtn='changeStyle' v-if='!isMobile' />
 
   <!-- 控制按钮 -->
-  <controller :songId='curSongId' @play="goPlay" :playWay='playWay' @canNotPlay='popToast' />
+  <controller :songId='curSongId' :mp3='curSongInfo.mp3' @play="goPlay" :playWay='playWay' @canNotPlay='popToast' />
 
   <svgBtn icoName='keyIcon' class='keyTips' @click.native='popToast("→：播下一首<br> ←：播上一首<br>↑ ：增加音量<br>↓ ：减少音量")' v-if='!isMobile' />
 
@@ -24,24 +25,21 @@
     QQ: 1562714
     <br>weChat: Pandamo
     <br>pandamo@gmail.com</small>
-  <small v-else style='position: fixed;  top: 4vw;  right: 2vw;  text-align: right;'>30CM MusicBox</small>
+  <small v-else style='position: fixed;  top: 2vw;  right: 2vw;  text-align: right;'>30CM.COM<br>MUSICBOX</small>
 
   <!--  toast -->
   <toast :msg='toastMessage' />
 </div>
 </template>
 <script>
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+import songs from './assets/js/songList.js'
 import loadingCover from './components/loadingCover'
 import list from './components/list'
 import changeRecordStyleBtn from './components/changeRecordStyleBtn'
 import controller from './components/controller'
 import toast from './components/toast'
 import svgBtn from './components/svgBtn'
-// import recordPlayer from './components/recordPlayer'
-// import recordPlayerMobile from './components/recordPlayerMobile'
-// const recordPlayer = () => import('./../src/components/recordPlayer.vue')
-// const recordPlayerMobile = () => import('./../src/components/recordPlayerMobile.vue')
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 
 // 判断是否手机，加载相应唱片样式
 const player = isMobile ? () => import('./../src/components/recordPlayerMobile.vue') : (resolve) => {
@@ -63,7 +61,7 @@ export default {
     return {
       api: 'https://bird.ioliu.cn/netease/playlist?id=',
       staticApi: '../static/demoData.json',
-      sondList: [], // 歌曲列表
+      sondList: songs, // 歌曲列表
       normalPlayList: [], // 顺序播放列表
       randomPlayList: [], // 随机播放列表（只存序号）
       curSongIndex: 0, // 当前播放到第几首
@@ -84,6 +82,7 @@ export default {
       normalPlayNext: true,
       toastMessage: '',
       isMobile: isMobile,
+      toggle: !isMobile,
       inited: false
     }
   },
@@ -109,7 +108,6 @@ export default {
     }
   },
   methods: {
-
     playSong(songid) {
       // 切换歌曲
       this.curSongId = songid
@@ -125,7 +123,6 @@ export default {
           this.playing = false
           break
         case 'next': // 播放下一首
-          console.log('播放下一首')
           if (this.curSongIndex < this.sondList.length - 1) {
             this.curSongIndex++
           } else {
@@ -198,7 +195,7 @@ export default {
         this.curSongId = this.sondList[0].id
       }
     },
-    getNetData() {
+    /* getNetData() {
       // 从bird.ioliu.cn获取列表
       this.$http.get(this.api + this.songListId, {
         timeout: 3000
@@ -230,23 +227,27 @@ export default {
           this.creatPlayList(resp.data.playlist.tracks.length)
           this.inited = true
         } else {
-          this.getLocalData()          
+          this.getLocalData()
         }
       }).catch(() => {
         // bird.ioliu.cn的接口挂了,调用静态接口
         this.getLocalData()
       })
-    },
+    }, */
     getLocalData() {
       if (localStorage.getItem('payWay')) {
         this.playWay = JSON.parse(localStorage.getItem('payWay'))
       }
       // 从静态接口获取列表
+      /*
       this.$http.get(this.staticApi).then((resp) => {
         console.log('从静态接口获取列表: ', resp)
         this.sondList = resp.data
         this.creatPlayList(resp.data.length)
       })
+      */
+      // this.sondList = resp.data
+      this.creatPlayList(this.sondList.length)
       this.inited = true
     },
     savePlayWay() {
@@ -254,12 +255,10 @@ export default {
       localStorage.setItem('payWay', JSON.stringify(this.playWay))
     },
     popToast(message) {
-      if (!this.toastMessage) {
-        this.toastMessage = message
-        setTimeout(() => {
-          this.toastMessage = ''
-        }, 2000)
-      }
+      this.toastMessage = message
+      setTimeout(() => {
+        this.toastMessage = ''
+      }, 2000)
     }
   },
   created() {

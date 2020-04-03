@@ -1,5 +1,5 @@
 <template>
-  <div :class="['toast',{'hide':!msg},{'mobileToast':isMObile}]" v-html='msg'></div>
+  <div :class="[{'toast':!isMObile},{'hide':!show},{'mobileToast':isMObile}]" v-html='msg'></div>
 </template>
 <script>
 export default {
@@ -7,7 +7,18 @@ export default {
   props: ['msg'],
   data() {
     return {
-      isMObile:/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      isMObile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+      show: false
+    }
+  },
+  watch: {
+    'msg': function(nVal, oVal) {
+      if (nVal) {
+        this.show = true
+        setTimeout(() => {
+          this.show = false
+        }, 2000)
+      }
     }
   }
 }
@@ -15,7 +26,7 @@ export default {
 </script>
 <style>
 .toast {
-  position: absolute;
+  position: fixed;
   bottom: 200px;
   right: 0;
   padding: 30px;
@@ -29,9 +40,21 @@ export default {
   transition: transform .6s;;
 }
 .hide{
-	transform: translateX(350px);transition: transform .6s;  padding: 0 !important;
+  transform:translateX(350px);transition: transform .6s;  padding: 0 !important;
 }
-.mobileToast{bottom: 25vh;padding:3vw;left: 0;	transform: translateX(0);transition: transform .6s; }
-.hide.mobileToast{transform: translateX(100vw) !important;}
+.mobileToast{opacity: 1;
+  background-color: rgba(0,0,0,.4);
+  bottom: 0;
+  position: fixed;
+  width: 100vw;
+  text-align: center;
+  z-index: 9999;
+  color: #fff;
+  padding: 3vw;
+  transition: opacity .6s;}
+
+.hide.mobileToast{
+  opacity:0;
+transition: opacity .6s;padding: 0;}
 
 </style>

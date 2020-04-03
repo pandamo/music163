@@ -1,21 +1,22 @@
 <template>
-  <div v-if='songInfo'>
-    <div class="cdStyle">
-      <div :class="['blurCoverBack',{'loaded':!loaded}]" :style="playerBack"></div>
-      <div class="cdBox" :style='moveStyle'  @touchstart='touchStart' @touchmove='touchMove' @touchend='toucheEnd'>
-        <div class="cdLlight"></div>
-        <img :src='cover' :class="[{'cd':loaded},{'pause':!playing || touching}]" id='cd'/>
-        <div class="cdShadow"></div>
-      </div>
-    </div>
-    <div class="songInfo">
-      <div>{{songInfo.name}}</div>
-      <div><span>{{artists}}</span></div>
+<div v-show='songInfo' class="mobilePLayer">
+  <div class="cdStyle">
+    <div :class="['blurCoverBack',{'loaded':!loaded}]" :style="playerBack"></div>
+    <div class="cdBox" :style='moveStyle' @touchstart='touchStart' @touchmove='touchMove' @touchend='toucheEnd'>
+      <div class="cdLlight"></div>
+      <div  :class="[{'cdShadow':loaded},{'pause':!playing || touching}]" ></div>
+      <img :src='cover' :class="[{'cd':loaded},{'pause':!playing || touching}]" id='cd' />
     </div>
   </div>
+  <div class="songInfo">
+    <div>{{songInfo.name}}</div>
+    <div><span>{{artists}}</span></div>
+  </div>
+</div>
 </template>
+
 <script>
-import controller from './controller'
+// import controller from './controller'
 export default {
   name: 'recordPlayerMobile',
   props: ['songInfo', 'cdStyle', 'playing'],
@@ -31,7 +32,7 @@ export default {
       touching: false,
       touchAction: '',
       opacity: 1,
-      cover:''
+      cover: ''
     }
   },
   computed: {
@@ -40,7 +41,7 @@ export default {
         return this.songInfo.artist.map(v => v.name).join(',')
       }
     },
-    moveStyle: function() {
+    moveStyle: function () {
       // 图标动态样式
       if (this.touching) {
         return {
@@ -82,12 +83,13 @@ export default {
       }
     },
     touchStart(e) {
-      this.touching = true
+      
       this.touchStartX = e.touches[0].clientX
       this.opacity = 1
       // console.log('touchStart:'+this.touchStartX);
     },
     touchMove(e) {
+      this.touching = true
       // let _dom = document.getElementById('cd')
       this.endX = e.touches[0].clientX - this.touchStartX
       let _opacity = 1 - Math.abs(this.endX / 300)
@@ -133,7 +135,7 @@ export default {
     }
   },
   watch: {
-    songInfo: function(v, oldVal) {
+    songInfo: function (v, oldVal) {
       console.log('songInfo: ', v)
       this.initRecodPlayer(v)
     }
@@ -143,24 +145,21 @@ export default {
   }
 }
 </script>
+
 <style scoped>
-.blurCoverBack {
-  background-size: cover;
-  top: -10vh;
-  left: -10vw;
-  width: 120vw;
-  height: 120vh;
+.mobilePLayer .cdBox {
+  width: 100vw;
+  height: 100vw;
+  border-radius: 50%;
+  top: 5vh;
+  box-shadow: -2vw -1vw 5vw rgba(0,0,0,.3);
 }
-.cdBox {
-  overflow: hidden;
-  top: -20vh;
-}
-.cdStyle {
+.cdStyle{
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  position: relative;
 }
+
 .cd,
 .cdShadow,
 .cdLlight,
@@ -170,41 +169,36 @@ export default {
   border-radius: 50vw;
   min-width: inherit;
   min-height: inherit;
+  mask: radial-gradient(transparent, transparent 14vw, rgba(255, 255, 255, 0.4) 14.1vw, #000 14.2vw);
 }
+
 /* .vinylBack,.vinylStyle .cdLlight,.cdShadow{width: 120vw;height: 120vw;}
 .vinylStyle .cd{width: 55vw;height: 55vw;min-width: inherit;min-height: inherit}
 .vinylStyle .cdLlight{min-width: inherit;min-height: inherit} */
 .songInfo {
-  bottom: 18vh;
+  top: 122vw;
 }
+
 .cdStyle .cd {
-  mask: radial-gradient(
-    transparent,
-    transparent 14vw,
-    rgba(255, 255, 255, 0.4) 14.1vw,
-    #000 14.2vw
-  ) !important;
-  -webkit-mask: radial-gradient(
-    transparent,
-    transparent 14vw,
-    rgba(255, 255, 255, 0.4) 14.1vw,
-    #000 14.2vw
-  ) !important;
+    padding: .5vw;
+  mask: radial-gradient(transparent,
+      transparent 16vw,
+      rgba(255, 255, 255, 0.4) 16.1vw,
+      #000 16.2vw) !important;
+  
 }
+
 .cdLlight {
-  mask: radial-gradient(
-    transparent,
-    transparent 7vw,
-    rgba(255, 255, 255, 0.4) 7.1vw,
-    #000 7.2vw
-  ) !important;
-  -webkit-mask: radial-gradient(
-    transparent,
-    transparent 7vw,
-    rgba(255, 255, 255, 0.4) 7.1vw,
-    #000 7.2vw
-  ) !important;
+  mask: radial-gradient(transparent,
+      transparent 7vw,
+      rgba(255, 255, 255, 0.4) 7.1vw,
+      #000 7.2vw) !important;
+  -webkit-mask: radial-gradient(transparent,
+      transparent 7vw,
+      rgba(255, 255, 255, 0.4) 7.1vw,
+      #000 7.2vw) !important;
 }
+
 .cdBox::after {
   width: 14vw;
   height: 14vw;
