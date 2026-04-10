@@ -1,17 +1,17 @@
 <template>
   <div v-if='songInfo'>
-    <div :class="[{'cdStyle':cdStyle},{'vinylStyle':!cdStyle}]">
-      <div :class="['blurCoverBack',{'loaded':!loaded}]" :style="playerBack"></div>
-      <div :class="['cdBox',{'cdSlideIn':loaded}]">
+    <div :class="[{ 'cdStyle': cdStyle }, { 'vinylStyle': !cdStyle }]">
+      <div :class="['blurCoverBack', { 'loaded': !loaded }]" :style="playerBack"></div>
+      <div :class="['cdBox', { 'cdSlideIn': loaded }]">
         <div class="vinylBack" v-if='!cdStyle'></div>
-         <div  :class="[{'cdShadow':loaded},{'pause':!playing}]" ></div>
+        <div :class="[{ 'cdShadow': loaded }, { 'pause': !playing }]"></div>
         <div class="cdLlight"></div>
-        <img :src='cover' :class="['cd',{'pause':!playing}]"/>
+        <img :src='cover' :class="['cd', { 'pause': !playing }]" />
       </div>
     </div>
     <div class="songInfo">
-      <div>{{songInfo.name}}</div>
-      <div><span>{{artists}}</span></div>
+      <div>{{ songInfo.name }}</div>
+      <div><span>{{ artists }}</span></div>
     </div>
   </div>
 </template>
@@ -38,11 +38,12 @@ export default {
   },
   methods: {
     initRecodPlayer(songInfo) {
+      console.log('songInfo: ', songInfo);
       this.loaded = false
       let _img = new Image()
       let _src = songInfo.cover + '?param=800y800'
       _img.src = _src
-      this.songSrc = '//music.163.com/song/media/outer/url?id=' + songInfo.id + '.mp3'
+      this.songSrc = songInfo.url ? songInfo.url : '//music.163.com/song/media/outer/url?id=' + songInfo.id + '.mp3'
       _img.onload = () => {
         setTimeout(() => {
           this.playerBack.backgroundImage = "url('" + _src + "')"
@@ -53,7 +54,7 @@ export default {
     }
   },
   watch: {
-    songInfo: function(v, oldVal) {
+    songInfo: function (v, oldVal) {
       this.initRecodPlayer(v)
     }
   },

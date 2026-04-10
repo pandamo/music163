@@ -1,18 +1,18 @@
 <template>
-  <div :class="['controller',{'mobileControll':isMobile}]">
+  <div :class="['controller', { 'mobileControll': isMobile }]">
     <audio id="audioPlayer" :src="songSrc" :autoplay="autoplay" controls="" style='display:none'></audio>
-    <svgBtn  :icoName='playWayIcon' @goPlay='play(playWayIcon)' class='smallIcon' />
+    <svgBtn :icoName='playWayIcon' @goPlay='play(playWayIcon)' class='smallIcon' />
     <svgBtn icoName='prev' @goPlay='play("prev")' />
 
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class='bigIcon' @click='play("play")'>
-  <path v-show='!playing' fill="#fff" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12v24l18-12-18-12z"/>
-<path v-show='playing' fill="none" stroke="#fff" stroke-width="3" d="M18 14 v20 M30 14 v20"  stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="24" cy="24" r="22" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" opacity=".3"/>
-  <circle id='cc' cx="24" cy="24" r="22" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="0" style="transform:rotate(-90deg);transform-origin:center" stroke-dasharray='0 140' stroke-dashoffset='0'/>
-</svg>
+      <path v-show='!playing' fill="#fff" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12v24l18-12-18-12z" />
+      <path v-show='playing' fill="none" stroke="#fff" stroke-width="3" d="M18 14 v20 M30 14 v20" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="24" cy="24" r="22" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" opacity=".3" />
+      <circle id='cc' cx="24" cy="24" r="22" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="0" style="transform:rotate(-90deg);transform-origin:center" stroke-dasharray='0 140' stroke-dashoffset='0' />
+    </svg>
     <svgBtn icoName='next' @goPlay='play("next")' />
-    <svgBtn icoName='listIcon' class='smallIcon' @goPlay='toggleList' v-if='isMobile'/>
-    <div  class="volumeBar">
+    <svgBtn icoName='listIcon' class='smallIcon' @goPlay='toggleList' v-if='isMobile' />
+    <div class="volumeBar">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class='speakerIcon' @click='muteOnoff'>
         <path fill='#fff' d="M3.503 7.688H1.518a.5.5 0 0 0-.5.5v7.623a.5.5 0 0 0 .5.5h1.985a.5.5 0 0 0 .5-.5V8.188a.5.5 0 0 0-.5-.5zm9.121-3.067a.497.497 0 0 0-.477-.036L5.602 7.534a.5.5 0 0 0-.294.456v8.02c0 .196.115.375.294.456l6.545 2.949a.498.498 0 0 0 .706-.456V5.041a.499.499 0 0 0-.229-.42z" />
         <g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">
@@ -29,7 +29,7 @@
 import svgBtn from './svgBtn'
 export default {
   name: 'controller',
-  props: ['songId', 'playWay', 'mp3'],
+  props: ['songId', 'playWay', 'url'],
   data() {
     return {
       autoplay: true,
@@ -107,10 +107,11 @@ export default {
     }
   },
   watch: {
-    songId: function(val, oldVal) {
+    songId: function (val, oldVal) {
+      console.log('songId', val);
       // 如果传的mp3路径直接替换播放路径
-      this.songSrc = this.mp3
-        ? this.mp3
+      this.songSrc = this.url
+        ? this.url
         : String(val).indexOf('.mp3') > 0
           ? val
           : '//music.163.com/song/media/outer/url?id=' + val + '.mp3'
@@ -123,19 +124,24 @@ export default {
         }
       }, 1500)
     },
-    volume: function(val) {
+    volume: function (val) {
       this.playerDom.volume = val
       if (val !== 0) {
         this.volumeTmp = val
       }
       localStorage.setItem('volume', val)
     },
-    percent: function(val) {
+    percent: function (val) {
       this.showProgress()
     }
   },
   mounted() {
     this.$nextTick(() => {
+      this.songSrc = this.url
+        ? this.url
+        : String(this.songId).indexOf('.mp3') > 0
+          ? this.songId
+          : '//music.163.com/song/media/outer/url?id=' + this.songId + '.mp3'
       this.playerDom = document.getElementById('audioPlayer')
       this.playerDom.volume = this.volume
       this.playerDom.addEventListener('ended', () => {
@@ -214,19 +220,20 @@ export default {
   margin: 0 60px;
   opacity: 0.5;
   border-radius: 50%;
-  filter: drop-shadow(-1px -2px 4px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5));
   transition: all 0.6s;
 }
+
 .controller svg.bigIcon {
   width: 64px;
   height: 64px;
   flex: 0 0 64px;
 }
-.controller svg:active {
+
+.controller svg:active,
+.controller svg:hover {
   opacity: 0.8;
   transition: all 0.6s;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
 }
 
 .controller input {
@@ -291,6 +298,7 @@ export default {
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.5);
 }
+
 .mobileControll {
   width: 100vw;
   left: 0;
@@ -299,19 +307,23 @@ export default {
   margin: 0;
   padding: 0 4vw;
 }
+
 /* .mobileControll .smallIcon, */
 .mobileControll .volumeBar {
   display: none;
 }
+
 .mobileControll path {
   transition: all 0.3s;
 }
+
 .mobileControll svg {
   height: 12vw;
   margin: 0;
   width: 12vw;
   flex: 0 0 12vw;
 }
+
 .mobileControll .smallIcon {
   flex: 0 0 8vw;
   width: 8vw;

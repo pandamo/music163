@@ -3,8 +3,9 @@
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
+
 :root {
-  --laser:conic-gradient(#fff, #adadad 10%, #d4d4d4 17%, #ffffff 29%, #b1ff85, #84ffd5, #80edff, #86b2ff, #d48cff, #ff92ce, #ff6269, #ffb263, #FEAC00, #FFCC00 35%, #ffffff 40%, #b5b5b5 45%, #ababab 48%, #eee 60%, #fff 68%, #cacaca 81%, #b1ff85, #84ffd5, #80edff, #86b2ff, #d691ff, #ff92ce, #ff6269, #ffb263, #FEAC00 85%, #fff 88%, #eee 90%, #ddd 92%, #fff)
+  --laser: conic-gradient(#fff, #adadad 10%, #d4d4d4 17%, #ffffff 29%, #b1ff85, #84ffd5, #80edff, #86b2ff, #d48cff, #ff92ce, #ff6269, #ffb263, #FEAC00, #FFCC00 35%, #ffffff 40%, #b5b5b5 45%, #ababab 48%, #eee 60%, #fff 68%, #cacaca 81%, #b1ff85, #84ffd5, #80edff, #86b2ff, #d691ff, #ff92ce, #ff6269, #ffb263, #FEAC00 85%, #fff 88%, #eee 90%, #ddd 92%, #fff)
 }
 
 html,
@@ -119,9 +120,7 @@ p {
   background-color: rgba(0, 0, 0, .2);
 }
 
-.list ul {
-  background-color: rgba(0, 0, 0, .3);
-}
+
 
 .author {
   position: absolute;
@@ -141,17 +140,17 @@ p {
 }
 
 .blurCoverBack {
-    background-size: 120% auto;
-    background-position: center;
-    position: fixed;
-    width: 120vw;
-    height: 120vh;
-    top: -10vh;
-    left: -10vw;
-    z-index: 1;
-    filter: blur(20px);
-    opacity: .7;
-    transition: opacity .3s ease-in-out;
+  background-size: 120% auto;
+  background-position: center;
+  position: fixed;
+  width: 120vw;
+  height: 120vh;
+  top: -10vh;
+  left: -10vw;
+  z-index: 1;
+  filter: blur(20px);
+  opacity: .7;
+  transition: opacity .3s ease-in-out;
 }
 
 .cdBox {
@@ -241,7 +240,7 @@ p {
 }
 
 .cdStyle .cd {
-  padding:3px;  
+  padding: 3px;
   mask: radial-gradient(transparent 80px, rgba(255, 255, 255, .4) 81px, #000 82px);
 }
 
@@ -285,7 +284,7 @@ p {
   border-radius: 500px;
   position: absolute;
   animation: roll linear 6s infinite 1s;
-  z-index:99
+  z-index: 99
 }
 
 .cdSlideIn .cd {
@@ -299,7 +298,7 @@ p {
   border-radius: 500px;
   -webkit-mask: radial-gradient(transparent, transparent 35px, rgba(255, 255, 255, .4) 37px, #000 37px);
   mask: radial-gradient(transparent 35px, rgba(255, 255, 255, .4) 37px, #000 37px);
-  box-shadow:0 0 1px rgba(255, 255, 255, .2) inset;
+  box-shadow: 0 0 1px rgba(255, 255, 255, .2) inset;
   background: -moz-linear-gradient(-25deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
   background: -webkit-linear-gradient(-25deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
   background: linear-gradient(115deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0) 100%);
@@ -344,6 +343,7 @@ p {
   0% {
     transform: translateY(-100vh);
   }
+
   100% {
     transform: translateY(0);
   }
@@ -365,8 +365,7 @@ p {
 }
 
 .fade-enter,
-.fade-leave-to
-  {
+.fade-leave-to {
   opacity: 0;
 }
 

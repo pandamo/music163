@@ -1,35 +1,36 @@
 <template>
-<div id="app">
+  <div id="app">
 
-  <transition name='fade'>
-   <loadingCover v-if='!inited && isMobile'></loadingCover>
-  </transition>
+    <transition name='fade'>
+      <loadingCover v-if='!inited && isMobile'></loadingCover>
+    </transition>
 
-  <!-- 左边播放列表 -->
-  <list :sondList='sondList' :songId='curSongId' @changeSong='playSong' :isMobile='isMobile' :toggle='toggle' />
+    <!-- 左边播放列表 -->
+    <list :sondList='sondList' :songId='curSongId' @changeSong='playSong' :isMobile='isMobile' :toggle='toggle' />
 
-  <!-- 右边播放器 -->
+    <!-- 右边播放器 -->
 
-  <!-- 唱片-->
-  <player :songInfo='curSongInfo' :cdStyle='cdStyle' :playing='playing' @swipeCd='goPlay' />
+    <!-- 唱片-->
+    <player :songInfo='curSongInfo' :cdStyle='cdStyle' :playing='playing' @swipeCd='goPlay' />
 
-  <!-- 唱片样式切换 -->
-  <changeRecordStyleBtn :cdStyle='cdStyle' @changeFromBtn='changeStyle' v-if='!isMobile' />
+    <!-- 唱片样式切换 -->
+    <changeRecordStyleBtn :cdStyle='cdStyle' @changeFromBtn='changeStyle' v-if='!isMobile' />
 
-  <!-- 控制按钮 -->
-  <controller :songId='curSongId' :mp3='curSongInfo.mp3' @play="goPlay" :playWay='playWay' @canNotPlay='popToast' />
+    <!-- 控制按钮 -->
+    <controller :songId='curSongId' :url='curSongInfo.url' @play="goPlay" :playWay='playWay' @canNotPlay='popToast' />
 
-  <svgBtn icoName='keyIcon' class='keyTips' @click.native='popToast("→：播下一首<br> ←：播上一首<br>↑ ：增加音量<br>↓ ：减少音量")' v-if='!isMobile' />
+    <svgBtn icoName='keyIcon' class='keyTips' @click.native='popToast("→：播下一首<br> ←：播上一首<br>↑ ：增加音量<br>↓ ：减少音量")' v-if='!isMobile' />
 
-  <small class="author" v-if='!isMobile'>
-    QQ: 1562714
-    <br>weChat: Pandamo
-    <br>pandamo@gmail.com</small>
-  <small v-else style='position: fixed;  top: 2vw;  right: 2vw;  text-align: right;'>30CM.COM<br>MUSICBOX</small>
+    <small class="author" v-if='!isMobile'>
+      QQ: 1562714
+      <br>weChat: Pandamo
+      <br>pandamo@gmail.com
+    </small>
+    <small v-else style='position: fixed;  top: 2vw;  right: 2vw;  text-align: right;'>30CM.COM<br>MUSICBOX</small>
 
-  <!--  toast -->
-  <toast :msg='toastMessage' />
-</div>
+    <!--  toast -->
+    <toast :msg='toastMessage' />
+  </div>
 </template>
 <script>
 import songs from './assets/js/songList.js'
@@ -59,8 +60,8 @@ export default {
   },
   data() {
     return {
-      api: 'https://bird.ioliu.cn/netease/playlist?id=',
-      staticApi: '../static/demoData.json',
+      //api: 'https://bird.ioliu.cn/netease/playlist?id=',
+      //staticApi: '../static/demoData.json',
       sondList: songs, // 歌曲列表
       normalPlayList: [], // 顺序播放列表
       randomPlayList: [], // 随机播放列表（只存序号）
@@ -82,7 +83,7 @@ export default {
       normalPlayNext: true,
       toastMessage: '',
       isMobile: isMobile,
-      toggle: !isMobile,
+      toggle: false,
       inited: false
     }
   },

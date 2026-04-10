@@ -1,18 +1,18 @@
 <template>
-<div v-show='songInfo' class="mobilePLayer">
-  <div class="cdStyle">
-    <div :class="['blurCoverBack',{'loaded':!loaded}]" :style="playerBack"></div>
-    <div class="cdBox" :style='moveStyle' @touchstart='touchStart' @touchmove='touchMove' @touchend='toucheEnd'>
-      <div class="cdLlight"></div>
-      <div  :class="[{'cdShadow':loaded},{'pause':!playing || touching}]" ></div>
-      <img :src='cover' :class="[{'cd':loaded},{'pause':!playing || touching}]" id='cd' />
+  <div v-show='songInfo' class="mobilePLayer">
+    <div class="cdStyle">
+      <div :class="['blurCoverBack', { 'loaded': !loaded }]" :style="playerBack"></div>
+      <div class="cdBox" :style='moveStyle' @touchstart='touchStart' @touchmove='touchMove' @touchend='toucheEnd'>
+        <div class="cdLlight"></div>
+        <div :class="[{ 'cdShadow': loaded }, { 'pause': !playing || touching }]"></div>
+        <img :src='cover' :class="[{ 'cd': loaded }, { 'pause': !playing || touching }]" id='cd' />
+      </div>
+    </div>
+    <div class="songInfo">
+      <div>{{ songInfo.name }}</div>
+      <div><span>{{ artists }}</span></div>
     </div>
   </div>
-  <div class="songInfo">
-    <div>{{songInfo.name}}</div>
-    <div><span>{{artists}}</span></div>
-  </div>
-</div>
 </template>
 
 <script>
@@ -73,7 +73,7 @@ export default {
       let _src = songInfo.cover + '?param=400y400'
       _img.src = _src
       // console.log('_img.src: ', _img.src)
-      this.songSrc = '//music.163.com/song/media/outer/url?id=' + songInfo.id + '.mp3'
+      this.songSrc = songInfo.url ? songInfo.url : '//music.163.com/song/media/outer/url?id=' + songInfo.id + '.mp3'
       _img.onload = () => {
         this.loaded = true
         setTimeout(() => {
@@ -83,7 +83,7 @@ export default {
       }
     },
     touchStart(e) {
-      
+
       this.touchStartX = e.touches[0].clientX
       this.opacity = 1
       // console.log('touchStart:'+this.touchStartX);
@@ -152,9 +152,10 @@ export default {
   height: 100vw;
   border-radius: 50%;
   top: 5vh;
-  box-shadow: -2vw -1vw 5vw rgba(0,0,0,.3);
+  box-shadow: -2vw -1vw 5vw rgba(0, 0, 0, .3);
 }
-.cdStyle{
+
+.cdStyle {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
@@ -180,12 +181,12 @@ export default {
 }
 
 .cdStyle .cd {
-    padding: .5vw;
+  padding: .5vw;
   mask: radial-gradient(transparent,
       transparent 16vw,
       rgba(255, 255, 255, 0.4) 16.1vw,
       #000 16.2vw) !important;
-  
+
 }
 
 .cdLlight {

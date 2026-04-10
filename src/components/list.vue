@@ -1,13 +1,19 @@
 <template>
-  <div :class='[isMobile?"mobileList":"list",{"toggle":toggle && isMobile}]' @click='toggleShow'>
-    <ul>
-      <li v-for='song in sondList' :key='song.id'  @click='playThis(song.id)' :class='{playing:songId==song.id}'  :id="'s'+song.id">
-        {{ song.name }} <small>{{ artists(song.artist) }}</small>
-      </li>
-    </ul>
+  <div>
+    <svg v-if="!isMobile" class="listIcon" @click='toggleShow' xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+      <path fill="currentColor" d="M2 18h10v2H2zm0-7h14v2H2zm0-7h20v2H2zm17 11.17V9h5v2h-3v7a3 3 0 1 1-2-2.83M18 19a1 1 0 1 0 0-2a1 1 0 0 0 0 2" />
+    </svg>
+    <div :class='[isMobile ? "mobileList" : "list", { "toggle": toggle }]' @click='toggleShow'>
+      <ul class="playList">
+        <li v-for='song in sondList' :key='song.id' @click.stop='playThis(song.id)' :class='{ playing: songId == song.id }' :id="'s' + song.id">
+          {{ song.name }} <small>{{ artists(song.artist) }}</small>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 <script>
+
 import svgBtn from './svgBtn'
 export default {
   name: 'list',
@@ -15,7 +21,8 @@ export default {
   components: { svgBtn },
   data() {
     return {
-      // toggle: false
+      expend: true,
+      tog: false
     }
   },
   methods: {
@@ -25,7 +32,14 @@ export default {
       }
     },
     toggleShow() {
+
       this.$parent.toggle = !this.$parent.toggle
+      /* if (this.isMobile) {
+
+        this.$parent.toggle = !this.$parent.toggle
+      } else {
+        this.tog != !this.tog
+      } */
     },
     playThis(id) {
       this.$emit('changeSong', id)
@@ -41,40 +55,56 @@ export default {
     }
   },
   watch: {
-    songId: function(val, oldVal) {
+    songId: function (val, oldVal) {
       this.autoScroll()
     }
   },
-  created() {}
+  created() { }
 }
 </script>
 <style>
 .list {
   position: fixed;
-  top: 0;
-  bottom: 0;
-  left: -1px;
-  width: 200px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  top: 2vh;
+  height: 0;
+  left: 7vw;
+  overflow: hidden;
   z-index: 999;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 1vw;
+  width: 0;
+  padding: 0;
+  transition: all 0.3s ease-in-out;
 }
 
-.list,
+.list.toggle {
+  width: 20vw;
+  height: 70vh;
+  padding: 10px;
+}
+
+
+
+
 .list li {
   -webkit-user-select: none;
   padding: 0;
   margin: 0;
   list-style: none;
 }
-.list svg {
+
+.list ul {
   display: none;
-  width: 10vw;
-  height: 10vw;
-  flex: 0 0 10vw;
+  height: 100%;
+  overflow: auto;
 }
+
+.list.toggle ul {
+  display: block;
+}
+
 .list li,
 .mobileList li {
   white-space: nowrap;
@@ -87,10 +117,12 @@ export default {
   font-size: 14px;
   padding: 0.3em 1em;
 }
+
 .list li:hover,
 .list li:active {
   background-color: rgba(0, 0, 0, 0.2);
 }
+
 .playing {
   background-color: rgba(255, 255, 255, 0.2);
   color: #fff !important;
@@ -101,13 +133,14 @@ export default {
   margin: 2vw 0 0 52vw;
   transition: margin 0.3s;
 }
+
 /* .toggle{width:100vw;left:0}
 .toggle svg{margin-left: 38vw !important;transition:margin .5s;background-color: transparent}
 .toggle line{opacity:0;transform: rotate(0deg)}
 .toggle line:first-child{transform: rotate(45deg);transform-origin:center;transition:all .3s;  transform-box: fill-box;opacity:1}
 .toggle line:last-child{transform: rotate(-45deg);transform-origin:center;transition:all .3s;  transform-box: fill-box;opacity:1} */
 .mobileList {
-  position:fixed;
+  position: fixed;
   width: 100vw;
   left: 0;
   top: 100vh;
@@ -142,23 +175,78 @@ export default {
   background-color: rgba(0, 0, 0, 0.7) !important;
   transition: opacity 0.3s ease-in-out;
 }
-.toggle ul {
-  transition: transform 0.5s ease-out;
+
+.mobileList.toggle ul {
   transform: translateY(30vh);
 }
 
-.toggle::after{display: block;}
+
+.toggle::after {
+  display: block;
+}
+
 .mobileList li {
   text-shadow: none;
   color: #222;
-  padding:2vw 3vw;
+  padding: 2vw 3vw;
 }
+
 .mobileList small {
   color: #b3b3b3;
 }
+
 .mobileList .playing {
   background-color: #efefef;
   color: initial !important;
   border-radius: 10vw;
+}
+
+.mobileList #upDownArrow {
+  display: none;
+}
+
+
+
+#upDownArrow:hover path {
+  stroke: #fff
+}
+
+
+
+
+#upDownArrow path {
+  transition: all .2s ease-in-out;
+}
+
+.expend #upDownArrow path {
+  d: path('M70,20 L30,50 L70,80')
+}
+
+#upDownArrow {
+  width: 20px;
+  height: 20px;
+  opacity: .3;
+}
+
+
+#upDownArrow:hover {
+  opacity: 1;
+}
+
+.listIcon {
+  position: fixed;
+  width: 4vw;
+  height: 4vw;
+  max-width: 48px;
+  max-width: 48px;
+  top: 2vh;
+  left: 2vw;
+  z-index: 999;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.listIcon:hover {
+  color: rgba(0, 0, 0, 1);
 }
 </style>
